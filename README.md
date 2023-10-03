@@ -9,16 +9,15 @@ Add Question
 MCQ Quiz Check answer  
 Edit TopicEdit Topic  
 Delete Topic  
-
+Delete Question  
 ## Pending
 
 Edit Question  
 
-Delete Question  
+
 Written Quiz  
 Add Question From File  
-Quiz questions should fetch only one time  
-Add Question From gui problem for mcq  
+Quiz questions should fetch only one time
 Sign In
 Quiz feedback
 

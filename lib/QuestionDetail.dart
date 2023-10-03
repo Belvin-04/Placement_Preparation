@@ -199,6 +199,7 @@ class _QuestionDetailState extends State<QuestionDetail> {
                 optionController.text = "";
                 if(correctOption == ""){
                   correctOption = options[0];
+                  widget.question.setCorrectAnswer = correctOption;
                 }
                 Navigator.pop(context);
               });
@@ -223,7 +224,7 @@ class _QuestionDetailState extends State<QuestionDetail> {
 
 
     var response = await http.post(url, body: questionMap);
-    print(questionMap);
+    print(response.body);
 
     if (response.statusCode == 201) {
       int questionId = jsonDecode(response.body)["question_id"];

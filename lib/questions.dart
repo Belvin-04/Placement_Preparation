@@ -56,8 +56,11 @@ class _QuestionsState extends State<Questions> {
                                 return AlertDialog(
                                   title: Text("Delete Question ?"),
                                   content: Text("This action cannot be undone..."),
-                                  actions: [TextButton(onPressed: (){
-                                    deleteQuestion(snapshot.data![index].getId);
+                                  actions: [TextButton(onPressed: () async{
+                                    if (await deleteQuestion(snapshot.data![index].getId) == 1) {
+                                      Navigator.pop(context);
+                                      setState(() {});
+                                    }
                                   },child:Text("Yes")),TextButton(onPressed: (){
                                     Navigator.pop(context);
                                   },child: Text("No"))],
@@ -160,7 +163,17 @@ class _QuestionsState extends State<Questions> {
     }
   }
 
-  void deleteQuestion(int id) {
+  Future<int> deleteQuestion(int id) async{
+    var url = Uri.http(Constants.baseURL, Constants.questionPath, {"q_id": "$id"});
+    print(url);
+    // Await the http get response, then decode the json-formatted response.
+    var response = await http.delete(url);
+    if (response.statusCode == 200) {
+      return 1;
+    } else {
+      print(response.body);
+      return 0;
+    }
   }
 }
 

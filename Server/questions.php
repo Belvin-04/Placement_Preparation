@@ -140,7 +140,7 @@ if($_SERVER["REQUEST_METHOD"] == "GET"){
 else if($_SERVER["REQUEST_METHOD"] == "POST"){
     if(isset($_POST["question"]) && isset($_POST["level"]) && isset($_POST["topic"]) && isset($_POST["type"]) && isset($_POST["options"])
      && isset($_POST["correctAnswer"])){
-        
+
         // $sql = $conn->prepare("INSERT INTO question_details(`question`,`type_id`,`topic_id`,`level`) VALUES(?,?,?,?)");
         $type = 1;
         if($_POST["type"] == "WRITTEN"){
@@ -166,6 +166,7 @@ else if($_SERVER["REQUEST_METHOD"] == "POST"){
                 // $sql->bind_param("is",$quesId,$arr[0]);
                 // $sql->execute();
                 $sql = "INSERT INTO mcq_options(`question_id`,`choice`) VALUES(".$quesId.",'".$arr[$i]."')";
+                
                 $conn->query($sql);
                 if($arr[$i] == $_POST["correctAnswer"]){
                     // $correctId = $sql->insert_id;
@@ -208,7 +209,33 @@ else if($_SERVER["REQUEST_METHOD"] == "PATCH"){
 
 }
 else if($_SERVER["REQUEST_METHOD"] == "DELETE"){
+    if(isset($_GET["q_id"])){
+        $sql = $conn->prepare("SELECT * FROM question_details WHERE id = ?");
+        $sql->bind_param("i",$_GET["q_id"]);
 
+        $sql->execute();
+        $res = $sql->get_result();
+
+        if($res->num_rows == 0){
+            header("Content-Type:application/json");
+            http_response_code(404);
+            echo json_encode(array("message"=>"Question Not Found"));
+        }
+        else{
+            $sql = $conn->prepare("DELETE FROM question_details WHERE id = ?");
+            $sql->bind_param("i",$_GET["q_id"]);
+            if($sql->execute()){
+                header("Content-Type:application/json");
+                http_response_code(200);
+                echo json_encode(array("message"=>"Question Deleted Successfully"));    
+            }
+        }        
+    }
+    else{
+         header("Content-Type:application/json");
+        http_response_code(400);
+        echo json_encode(array("message"=>"Empty Fields"));
+    }
 }
 
 
