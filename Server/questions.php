@@ -186,18 +186,48 @@ else if($_SERVER["REQUEST_METHOD"] == "POST"){
         http_response_code(201);
         echo json_encode(array("message"=>"Question Added Successfully","question_id"=>$quesId));
     }
-    else if(isset($_POST["total"]) && isset($_POST["questions"])){
-        $questions = $_POST["questions"];
-        $total = $_POST["total"];
+    
+    else if(isset($_POST["data"])){
+        $data = json_decode($_POST["data"],true);
+        $questions = $data["questions"];
+        $total = $data["total"];
 
-        print_r($questions);
-        // print_r(json_decode($questions));
-        // for($i = 0; $i<$total; $i++){
-        //     echo($questions[$i]);
-        // }
+       for($i = 0; $i< $total; $i++){
+            $q = $questions[$i];
+
+            $type = 1;
+            if($q["type"] == "WRITTEN"){
+                $type = 2;
+            }
+
+            $sql = "INSERT INTO question_details(`question`,`type_id`,`topic_id`,`level`) VALUES('".$q["question"]."',".$type.",".$q["topic"]["id"].",".$q["level"].")";
+            $conn->query($sql);
+            $quesId = $conn->insert_id;
+        
+        
+            if($q["type"] == "MCQ"){
+                $correctId = 0;
+                $optionsString = implode(",",$q["options"]);
+                //$optionsString = substr($optionsString,1,-1);
+                $arr = explode(",",$optionsString);
+
+                for($j=0; $j<count($arr); $j++){
+                    $sql = "INSERT INTO mcq_options(`question_id`,`choice`) VALUES(".$quesId.",'".$arr[$j]."')";
+                    
+                    $conn->query($sql);
+                    if($arr[$j] == $q["correctAnswer"]){
+                        // $correctId = $sql->insert_id;
+                        $correctId = $conn->insert_id;
+                    }
+                }
+                $sql = "INSERT INTO question_answer_relation VALUES(".$quesId.",".$correctId.")";
+                $conn->query($sql);
+            }
+       }
 
         header("Content-Type:application/json");
-        
+        http_response_code(201);
+        echo json_encode(array("message"=>"Question Added Successfully"));
     }
     else{
         header("Content-Type:application/json");

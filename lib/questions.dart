@@ -144,22 +144,23 @@ class _QuestionsState extends State<Questions> {
       }
 
       Map<String,dynamic> questionRequestMap = {};
-      questionRequestMap["total"] = questions.length;
+      questionRequestMap["total"] = questions.length.toString();
       questionRequestMap["questions"] = questionsMap;
 
       var url = Uri.http(Constants.baseURL, Constants.questionPath);
-      var response = await http.post(url,body: questionRequestMap);
+      var response = await http.post(url,body: {"data":jsonEncode(questionRequestMap)});
 
-      // if (response.statusCode != 204) {
-      //   List b = jsonDecode(response.body)["body"];
-      //   int total = jsonDecode(response.body)["total"];
-      //   for (int i = 0; i < total; i++) {
-      //     questions.add(Question.toQuestion(b[i], widget.topic));
-      //   }
-      //   return questions;
-      // } else {
-      //   return [];
-      // }
+      print(response.body);
+      if (response.statusCode != 204) {
+        // List b = jsonDecode(response.body)["body"];
+        // int total = jsonDecode(response.body)["total"];
+        // for (int i = 0; i < total; i++) {
+        //   questions.add(Question.toQuestion(b[i], widget.topic));
+        // }
+        // return questions;
+      } else {
+        // return [];
+      }
     }
   }
 

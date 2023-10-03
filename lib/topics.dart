@@ -37,8 +37,8 @@ class _TopicsState extends State<Topics> {
                   itemBuilder: (context, index) {
                     return GestureDetector(
                       onTap: () {
-                        Navigator.push(context, MaterialPageRoute(builder: (context)=>Questions(Topic(snapshot.data![index].getName,snapshot.data![index].getId))));
-                        // Navigator.push(context, MaterialPageRoute(builder: (context) => Quiz(Topic(snapshot.data![index].getName, snapshot.data![index].getId))));
+                        // Navigator.push(context, MaterialPageRoute(builder: (context)=>Questions(Topic(snapshot.data![index].getName,snapshot.data![index].getId))));
+                        Navigator.push(context, MaterialPageRoute(builder: (context) => Quiz(Topic(snapshot.data![index].getName, snapshot.data![index].getId))));
                       },
                       child: Card(
                         child: ListTile(
