@@ -16,6 +16,7 @@ class Topics extends StatefulWidget {
 class _TopicsState extends State<Topics> {
   var topicController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -37,7 +38,12 @@ class _TopicsState extends State<Topics> {
                     return GestureDetector(
                       onTap: () {
                         // Navigator.push(context, MaterialPageRoute(builder: (context)=>Questions(Topic(snapshot.data![index].getName,snapshot.data![index].getId))));
-                        Navigator.push(context, MaterialPageRoute(builder: (context)=>Quiz(Topic(snapshot.data![index].getName,snapshot.data![index].getId))));
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => Quiz(Topic(
+                                    snapshot.data![index].getName,
+                                    snapshot.data![index].getId))));
                       },
                       child: Card(
                         child: ListTile(
@@ -45,20 +51,50 @@ class _TopicsState extends State<Topics> {
                           trailing: Row(
                             mainAxisSize: MainAxisSize.min,
                             children: [
-                              IconButton(icon: Icon(Icons.edit,color: Colors.blue,),onPressed: (){},),
-                              IconButton(icon: Icon(Icons.delete,color: Colors.red,),onPressed: (){
-                                showDialog(context: context, builder: (context){
-                                  return AlertDialog(
-                                    title: Text("Delete Topic ?"),
-                                    content: Text("This action cannot be undone..."),
-                                    actions: [TextButton(onPressed: (){
-                                      deleteTopic(snapshot.data![index].getId);
-                                    },child:Text("Yes")),TextButton(onPressed: (){
-                                      Navigator.pop(context);
-                                    },child: Text("No"))],
-                                  );
-                                });
-                              },),
+                              IconButton(
+                                icon: Icon(
+                                  Icons.edit,
+                                  color: Colors.blue,
+                                ),
+                                onPressed: () {
+                                  showSaveTopicDialog(snapshot.data![index]);
+                                },
+                              ),
+                              IconButton(
+                                icon: Icon(
+                                  Icons.delete,
+                                  color: Colors.red,
+                                ),
+                                onPressed: () {
+                                  showDialog(
+                                      context: context,
+                                      builder: (context) {
+                                        return AlertDialog(
+                                          title: Text("Delete Topic ?"),
+                                          content: Text(
+                                              "This action cannot be undone..."),
+                                          actions: [
+                                            TextButton(
+                                                onPressed: () async {
+                                                  if (await deleteTopic(snapshot
+                                                          .data![index]
+                                                          .getId) ==
+                                                      1) {
+                                                    Navigator.pop(context);
+                                                    setState(() {});
+                                                  }
+                                                },
+                                                child: Text("Yes")),
+                                            TextButton(
+                                                onPressed: () async {
+                                                  Navigator.pop(context);
+                                                },
+                                                child: Text("No"))
+                                          ],
+                                        );
+                                      });
+                                },
+                              ),
                             ],
                           ),
                         ),
@@ -66,7 +102,7 @@ class _TopicsState extends State<Topics> {
                     );
                   });
             } else {
-              return Center(child:CircularProgressIndicator());
+              return Center(child: CircularProgressIndicator());
             }
           }),
     );
@@ -77,7 +113,6 @@ class _TopicsState extends State<Topics> {
     var url = Uri.http(Constants.baseURL, Constants.topicPath);
 
     var response = await http.get(url);
-
 
     if (response.statusCode != 204) {
       List b = jsonDecode(response.body)["body"];
@@ -101,10 +136,9 @@ class _TopicsState extends State<Topics> {
       int topicId = jsonDecode(response.body)["topic_id"];
       topic.setId = topicId;
       return topic;
-    } else if(response.statusCode == 409) {
-      return Topic("409",409);
-    }
-    else{
+    } else if (response.statusCode == 409) {
+      return Topic("409", 409);
+    } else {
       return topic;
     }
   }
@@ -113,8 +147,8 @@ class _TopicsState extends State<Topics> {
     topicController.text = topic.getName;
     showDialog(
         context: context,
-        builder: (context){
-          return StatefulBuilder(builder: (context,setState1){
+        builder: (context) {
+          return StatefulBuilder(builder: (context, setState1) {
             bool existsMsg = false;
             return AlertDialog(
               title: Text("Topic Detail"),
@@ -125,53 +159,73 @@ class _TopicsState extends State<Topics> {
                     child: Column(
                       children: [
                         TextFormField(
-                          onChanged: (value){
+                          controller: topicController,
+                          onChanged: (value) {
                             topic.setName = value;
                           },
-                          validator: (value){
-                            if(value!.isEmpty){
+                          validator: (value) {
+                            if (value!.isEmpty) {
                               return "Please Enter Topic Name";
                             }
                             return null;
                           },
                           decoration: InputDecoration(
                               labelText: "Topic Name",
-                              border:OutlineInputBorder(
-                                borderRadius:BorderRadius.circular(10.0),
-                              )
-                          ),
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(10.0),
+                              )),
                         ),
-                        Visibility(visible:existsMsg,child: Text("Topic Already Exists",))
+                        Visibility(
+                            visible: existsMsg,
+                            child: Text(
+                              "Topic Already Exists",
+                            ))
                       ],
                     ),
                   )),
-              actions: [TextButton(onPressed: () async {
-                if(_formKey.currentState!.validate()){
-                  Topic t = await addTopic(topic);
-                  if(t.getId == 409 && t.getName == "409"){
-                    Navigator.pop(context);
-                    //setState1((){existsMsg = !existsMsg;})
-                    showSnackBar("Topic Already Exists", context);
-                  }
-                  else if(t.getId == 0){
-                    Navigator.pop(context);
-                    showSnackBar("Problem In Adding Topic", context);
-                  }
-                  else{
-                    topicController.text = "";
-                    Navigator.pop(context);
-                    showSnackBar("Topic Added Successfully", context);
-                    setState(() {
-
-                    });
-                  }
-
-                }
-              }, child: Text("Save"))],
+              actions: [
+                TextButton(
+                    onPressed: () async {
+                      if (_formKey.currentState!.validate()) {
+                        if(topic.getId != 0){
+                          topicController.text = "";
+                          Topic t = await updateTopic(topic);
+                          if (topic.getId == 409 && topic.getName == "409") {
+                            Navigator.pop(context);
+                            showSnackBar("Topic Already Exists", context);
+                          } else if (t.getName == "Error") {
+                            Navigator.pop(context);
+                            showSnackBar("Problem In Updating Topic", context);
+                          } else {
+                            topicController.text = "";
+                            Navigator.pop(context);
+                            showSnackBar("Topic Updated Successfully", context);
+                            setState(() {});
+                          }
+                        }
+                        else{
+                          Topic t = await addTopic(topic);
+                          if (t.getId == 409 && t.getName == "409") {
+                            Navigator.pop(context);
+                            //setState1((){existsMsg = !existsMsg;})
+                            showSnackBar("Topic Already Exists", context);
+                          } else if (t.getId == 0) {
+                            Navigator.pop(context);
+                            showSnackBar("Problem In Adding Topic", context);
+                          } else {
+                            topicController.text = "";
+                            Navigator.pop(context);
+                            showSnackBar("Topic Added Successfully", context);
+                            setState(() {});
+                          }
+                        }
+                      }
+                    },
+                    child: Text("Save"))
+              ],
             );
           });
-        }
-    );
+        });
   }
 
   void showSnackBar(String message, BuildContext context) {
@@ -180,7 +234,31 @@ class _TopicsState extends State<Topics> {
     ScaffoldMessenger.of(context).showSnackBar(snackBar);
   }
 
-  void deleteTopic(int id) {
+  Future<int> deleteTopic(int id) async {
+    var url = Uri.http(Constants.baseURL, Constants.topicPath, {"t_id": "$id"});
+    print(url);
+    // Await the http get response, then decode the json-formatted response.
+    var response = await http.delete(url);
+    if (response.statusCode == 200) {
+      return 1;
+    } else {
+      print(response.body);
+      return 0;
+    }
+  }
 
+  Future<Topic> updateTopic(Topic topic) async{
+    var url = Uri.http(Constants.baseURL, Constants.topicPath);
+
+    // Await the http get response, then decode the json-formatted response.
+    var response = await http.patch(url, body: {"name": topic.getName,"id":"${topic.getId}"});
+    print(response.statusCode);
+    if (response.statusCode == 201) {
+      return topic;
+    } else if (response.statusCode == 409) {
+      return Topic("409", 409);
+    } else {
+      return Topic("Error",topic.getId);
+    }
   }
 }

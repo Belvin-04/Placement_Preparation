@@ -7,12 +7,13 @@ CP Project: Placement Preparation module for ICT MU Portal
 Add Topic  
 Add Question  
 MCQ Quiz Check answer  
-
+Edit TopicEdit Topic  
+Delete Topic  
 
 ## Pending
-Edit Topic  
+
 Edit Question  
-Delete Topic  
+
 Delete Question  
 Written Quiz  
 Add Question From File  

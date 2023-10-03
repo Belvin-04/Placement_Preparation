@@ -2,6 +2,7 @@
 include "./dbconn.php";
 const DUPLICATE_KEY_NO = 1062;
 header("Access-Control-Allow-Origin: *");
+header("Access-Control-Allow-Methods: GET, POST, PATCH, DELETE");
 
 
 function addQuestion(){
