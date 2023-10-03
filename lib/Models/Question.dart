@@ -1,3 +1,5 @@
+import 'package:flutter/foundation.dart';
+
 import 'Topic.dart';
 
 class Question{
@@ -95,10 +97,11 @@ class Question{
     q.setTopic = t;
 
     if(questionMap.length == 6){
-      options = questionMap["options"];
+      options = (questionMap["options"] as List).map((item) => item as String).toList();
       q.setOptions = options;
       q.setCorrectAnswer = questionMap["correctAnswer"];
     }
+
     return q;
   }
 

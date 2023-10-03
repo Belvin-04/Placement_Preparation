@@ -36,8 +36,8 @@ class _TopicsState extends State<Topics> {
                   itemBuilder: (context, index) {
                     return GestureDetector(
                       onTap: () {
-                        //Navigator.push(context, MaterialPageRoute(builder: (context)=>Questions(Topic(snapshot.data![index].getName,snapshot.data![index].getId))));
-                        Navigator.push(context, MaterialPageRoute(builder: (context)=>Questions(Topic(snapshot.data![index].getName,snapshot.data![index].getId))));
+                        // Navigator.push(context, MaterialPageRoute(builder: (context)=>Questions(Topic(snapshot.data![index].getName,snapshot.data![index].getId))));
+                        Navigator.push(context, MaterialPageRoute(builder: (context)=>Quiz(Topic(snapshot.data![index].getName,snapshot.data![index].getId))));
                       },
                       child: Card(
                         child: ListTile(
@@ -74,8 +74,8 @@ class _TopicsState extends State<Topics> {
 
   Future<List<Topic>> getTopics() async {
     List<Topic> topics = [];
-    var url = Uri.http(Constants.baseURL, "Placement Preparation/topics.php");
-    print(url);
+    var url = Uri.http(Constants.baseURL, Constants.topicPath);
+
     var response = await http.get(url);
 
 
@@ -93,7 +93,7 @@ class _TopicsState extends State<Topics> {
   }
 
   Future<Topic> addTopic(Topic topic) async {
-    var url = Uri.http(Constants.baseURL, "Placement Preparation/topics.php");
+    var url = Uri.http(Constants.baseURL, Constants.topicPath);
 
     // Await the http get response, then decode the json-formatted response.
     var response = await http.post(url, body: {"name": topic.getName});

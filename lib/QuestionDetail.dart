@@ -211,7 +211,7 @@ class _QuestionDetailState extends State<QuestionDetail> {
   }
 
   void addQuestion(Question question) async{
-    var url = Uri.http(Constants.baseURL, "Placement Preparation/questions.php");
+    var url = Uri.http(Constants.baseURL, Constants.questionPath);
     var questionMap = Question.toMap(widget.question);
     questionMap["topic"] = questionMap["topic"]["id"].toString();
     questionMap["id"] = questionMap["id"].toString();

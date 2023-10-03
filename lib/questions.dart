@@ -23,10 +23,10 @@ class _QuestionsState extends State<Questions> {
     return Scaffold(
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          // Question q = Question("","WRITTEN",0);
-          // q.setTopic = widget.topic;
-          // Navigator.push(context, MaterialPageRoute(builder: (context)=>QuestionDetail(q)));
-          addQuestionsFromFile();
+          Question q = Question("","WRITTEN",0);
+          q.setTopic = widget.topic;
+          Navigator.push(context, MaterialPageRoute(builder: (context)=>QuestionDetail(q)));
+          // addQuestionsFromFile();
         },
         child: Icon(Icons.add),
       ),
@@ -78,7 +78,7 @@ class _QuestionsState extends State<Questions> {
 
   Future<List<Question>> getQuestions(int topicId) async {
     List<Question> questions = [];
-    var url = Uri.http(Constants.baseURL, "Placement Preparation/questions.php",
+    var url = Uri.http(Constants.baseURL, Constants.questionPath,
         {"t_id": "$topicId"});
     var response = await http.get(url);
     if (response.statusCode != 204) {
@@ -144,7 +144,7 @@ class _QuestionsState extends State<Questions> {
       questionRequestMap["total"] = questions.length;
       questionRequestMap["questions"] = questionsMap;
 
-      var url = Uri.http(Constants.baseURL, "Placement Preparation/questions.php");
+      var url = Uri.http(Constants.baseURL, Constants.questionPath);
       var response = await http.post(url,body: questionRequestMap);
 
       // if (response.statusCode != 204) {
