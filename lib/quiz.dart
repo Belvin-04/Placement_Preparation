@@ -16,11 +16,19 @@ class Quiz extends StatefulWidget{
 
 class _QuizState extends State<Quiz>{
   int q = 0;
-  bool loaded = false;
+  //bool loaded;
   String btnText = "Next";
-  List<Question> questions = [];
+  late Future<List<Question>> questions;
   String selectedAnswer = "";
   bool check = false;
+
+  @override
+  void initState() {
+    super.initState();
+
+    questions = getQuestions(widget.topic.getId);
+  }
+
   @override
   Widget build(BuildContext context){
     return Scaffold(
@@ -29,28 +37,28 @@ class _QuizState extends State<Quiz>{
       ),
       body: Center(
         child: FutureBuilder(
-          future: getQuestions(widget.topic.getId),
+          future: questions,
           builder: (context,snapshot){
-            if(snapshot.hasData && !loaded){
-              questions = snapshot.data!;
+            if(snapshot.hasData){
+              var questionData = snapshot.data;
               return Form(
                   child: Column(
                     children: [
-                      Text("${q+1}.${questions[q].question}"),
+                      Text("${q+1}.${questionData?[q].question}"),
                       ListView.builder(
                           shrinkWrap: true,
-                          itemCount: questions[q].getOptions.length,
+                          itemCount: questionData?[q].getOptions.length,
                           itemBuilder: (context, index) {
                             if(check){
-                              if(questions[q].getOptions[index] == questions[q].getCorrectAnswer){
-                                return RadioListTile(tileColor: Colors.green,title:Text(questions[q].getOptions[index]),value: questions[q].getOptions[index], groupValue: selectedAnswer, onChanged: (val){
+                              if(questionData?[q].getOptions[index] == questionData?[q].getCorrectAnswer){
+                                return RadioListTile(tileColor: Colors.green,title:Text(questionData![q].getOptions[index]),value: questionData?[q].getOptions[index], groupValue: selectedAnswer, onChanged: (val){
                                   setState(() {
                                     selectedAnswer = val!;
                                   });
                                 });
                               }
                               else{
-                                return RadioListTile(tileColor: Colors.red,title:Text(questions[q].getOptions[index]),value: questions[q].getOptions[index], groupValue: selectedAnswer, onChanged: (val){
+                                return RadioListTile(tileColor: Colors.red,title:Text(questionData![q].getOptions[index]),value: questionData?[q].getOptions[index], groupValue: selectedAnswer, onChanged: (val){
                                   setState(() {
                                     selectedAnswer = val!;
                                   });
@@ -58,7 +66,7 @@ class _QuizState extends State<Quiz>{
                               }
                             }
                             else{
-                              return RadioListTile(title:Text(questions[q].getOptions[index]),value: questions[q].getOptions[index], groupValue: selectedAnswer, onChanged: (val){
+                              return RadioListTile(title:Text(questionData![q].getOptions[index]),value: questionData?[q].getOptions[index], groupValue: selectedAnswer, onChanged: (val){
                                 setState(() {
                                   selectedAnswer = val!;
                                 });
@@ -71,80 +79,20 @@ class _QuizState extends State<Quiz>{
                         });
                       }, child: Text("Check")),
                       ElevatedButton(onPressed: (){
-                        if(q+2 == questions.length){
+                        if(q+2 == questionData?.length){
                           setState(() {
                             check = false;
                             q = q+1;
                             btnText = "Submit";
                           });
                         }
-                        else if(q+1 < questions.length){
+                        else if(q+1 < questionData!.length){
                           setState(() {
                             check = false;
                             q = q+1;
                           });
                         }
-                        else if(q+1 == questions.length){
-                          Navigator.pop(context);
-                        }
-                      }, child: Text(btnText))
-                    ],
-                  )
-              );
-            }
-            else if(loaded){
-              return Form(
-                  child: Column(
-                    children: [
-                      Text("${q+1}.${questions[q].question}"),
-                      ListView.builder(
-                          shrinkWrap: true,
-                          itemCount: questions[q].getOptions.length,
-                          itemBuilder: (context, index) {
-                            if(check){
-                              if(questions[q].getOptions[index] == questions[q].getCorrectAnswer){
-                                return RadioListTile(tileColor: Colors.green,title:Text(questions[q].getOptions[index]),value: questions[q].getOptions[index], groupValue: selectedAnswer, onChanged: (val){
-                                  setState(() {
-                                    selectedAnswer = val!;
-                                  });
-                                });
-                              }
-                              else{
-                                return RadioListTile(tileColor: Colors.red,title:Text(questions[q].getOptions[index]),value: questions[q].getOptions[index], groupValue: selectedAnswer, onChanged: (val){
-                                  setState(() {
-                                    selectedAnswer = val!;
-                                  });
-                                });
-                              }
-                            }
-                            else{
-                              return RadioListTile(title:Text(questions[q].getOptions[index]),value: questions[q].getOptions[index], groupValue: selectedAnswer, onChanged: (val){
-                                setState(() {
-                                  selectedAnswer = val!;
-                                });
-                              });
-                            }
-                          }),
-                      ElevatedButton(onPressed: (){
-                        setState(() {
-                          check = true;
-                        });
-                      }, child: Text("Check")),
-                      ElevatedButton(onPressed: (){
-                        if(q+2 == questions.length){
-                          setState(() {
-                            check = false;
-                            q = q+1;
-                            btnText = "Submit";
-                          });
-                        }
-                        else if(q+1 < questions.length){
-                          setState(() {
-                            check = false;
-                            q = q+1;
-                          });
-                        }
-                        else if(q+1 == questions.length){
+                        else if(q+1 == questionData!.length){
                           Navigator.pop(context);
                         }
                       }, child: Text(btnText))
@@ -161,7 +109,7 @@ class _QuizState extends State<Quiz>{
     );
   }
 
-  Future<List<Question>?> getQuestions(int topicId) async {
+  Future<List<Question>> getQuestions(int topicId) async {
     List<Question> questions = [];
     var url = Uri.http(Constants.baseURL, Constants.questionPath,
         {"t_id": "$topicId","type":"MCQ"});
@@ -175,12 +123,9 @@ class _QuizState extends State<Quiz>{
       for (int i = 0; i < total; i++) {
         questions.add(Question.toQuestion(b[i], widget.topic));
       }
-
-
       return questions;
-    } else {
-      return null;
     }
+    return questions;
   }
 }
 

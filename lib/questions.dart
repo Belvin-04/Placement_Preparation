@@ -23,10 +23,10 @@ class _QuestionsState extends State<Questions> {
     return Scaffold(
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          Question q = Question("","WRITTEN",0);
-          q.setTopic = widget.topic;
-          Navigator.push(context, MaterialPageRoute(builder: (context)=>QuestionDetail(q)));
-          // addQuestionsFromFile();
+          // Question q = Question("","WRITTEN",0);
+          // q.setTopic = widget.topic;
+          // Navigator.push(context, MaterialPageRoute(builder: (context)=>QuestionDetail(q)));
+          addQuestionsFromFile();
         },
         child: Icon(Icons.add),
       ),
