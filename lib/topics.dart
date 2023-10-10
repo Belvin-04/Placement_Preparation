@@ -20,11 +20,14 @@ class _TopicsState extends State<Topics> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      floatingActionButton: FloatingActionButton(
-          child: Icon(Icons.add),
-          onPressed: () {
-            showSaveTopicDialog(Topic(""));
-          }),
+      floatingActionButton: Visibility(
+        visible: Constants.userType == 1,
+        child: FloatingActionButton(
+            child: Icon(Icons.add),
+            onPressed: () {
+              showSaveTopicDialog(Topic(""));
+            }),
+      ),
       appBar: AppBar(
         title: Text("Topics"),
       ),
@@ -37,8 +40,33 @@ class _TopicsState extends State<Topics> {
                   itemBuilder: (context, index) {
                     return GestureDetector(
                       onTap: () {
-                        // Navigator.push(context, MaterialPageRoute(builder: (context)=>Questions(Topic(snapshot.data![index].getName,snapshot.data![index].getId))));
-                        Navigator.push(context, MaterialPageRoute(builder: (context) => Quiz(Topic(snapshot.data![index].getName, snapshot.data![index].getId))));
+                        if(Constants.userType == 1){
+                          Navigator.push(context, MaterialPageRoute(builder: (context)=>Questions(Topic(snapshot.data![index].getName,snapshot.data![index].getId))));
+                        }
+                        else{
+                          showDialog(context: context, builder: (context){
+                            return AlertDialog(
+                              content: Container(
+                                height: 80,
+                                child: Column(
+                                  children: [
+                                    ElevatedButton(onPressed: (){
+                                      Constants.quizType = "MCQ";
+                                      Navigator.push(context, MaterialPageRoute(builder: (context) => Quiz(Topic(snapshot.data![index].getName, snapshot.data![index].getId))));
+                                    }, child: Text("MCQ")),
+                                    Container(
+                                      margin: EdgeInsets.only(bottom: 20.0),
+                                    ),
+                                    ElevatedButton(onPressed: (){
+                                      Constants.quizType = "WRITTEN";
+                                      Navigator.push(context, MaterialPageRoute(builder: (context) => Quiz(Topic(snapshot.data![index].getName, snapshot.data![index].getId))));
+                                    }, child: Text("WRITTEN"))
+                                  ],
+                                ),
+                              ),
+                            );
+                          });
+                        }
                       },
                       child: Card(
                         child: ListTile(
@@ -46,49 +74,55 @@ class _TopicsState extends State<Topics> {
                           trailing: Row(
                             mainAxisSize: MainAxisSize.min,
                             children: [
-                              IconButton(
-                                icon: Icon(
-                                  Icons.edit,
-                                  color: Colors.blue,
+                              Visibility(
+                                visible: Constants.userType == 1,
+                                child: IconButton(
+                                  icon: Icon(
+                                    Icons.edit,
+                                    color: Colors.blue,
+                                  ),
+                                  onPressed: () {
+                                    showSaveTopicDialog(snapshot.data![index]);
+                                  },
                                 ),
-                                onPressed: () {
-                                  showSaveTopicDialog(snapshot.data![index]);
-                                },
                               ),
-                              IconButton(
-                                icon: Icon(
-                                  Icons.delete,
-                                  color: Colors.red,
-                                ),
-                                onPressed: () {
-                                  showDialog(
-                                      context: context,
-                                      builder: (context) {
-                                        return AlertDialog(
-                                          title: Text("Delete Topic ?"),
-                                          content: Text(
-                                              "This action cannot be undone..."),
-                                          actions: [
-                                            TextButton(
-                                                onPressed: () async {
-                                                  if (await deleteTopic(snapshot
-                                                          .data![index]
-                                                          .getId) ==
-                                                      1) {
+                              Visibility(
+                                visible: Constants.userType == 1,
+                                child: IconButton(
+                                  icon: Icon(
+                                    Icons.delete,
+                                    color: Colors.red,
+                                  ),
+                                  onPressed: () {
+                                    showDialog(
+                                        context: context,
+                                        builder: (context) {
+                                          return AlertDialog(
+                                            title: Text("Delete Topic ?"),
+                                            content: Text(
+                                                "This action cannot be undone..."),
+                                            actions: [
+                                              TextButton(
+                                                  onPressed: () async {
+                                                    if (await deleteTopic(snapshot
+                                                            .data![index]
+                                                            .getId) ==
+                                                        1) {
+                                                      Navigator.pop(context);
+                                                      setState(() {});
+                                                    }
+                                                  },
+                                                  child: Text("Yes")),
+                                              TextButton(
+                                                  onPressed: () async {
                                                     Navigator.pop(context);
-                                                    setState(() {});
-                                                  }
-                                                },
-                                                child: Text("Yes")),
-                                            TextButton(
-                                                onPressed: () async {
-                                                  Navigator.pop(context);
-                                                },
-                                                child: Text("No"))
-                                          ],
-                                        );
-                                      });
-                                },
+                                                  },
+                                                  child: Text("No"))
+                                            ],
+                                          );
+                                        });
+                                  },
+                                ),
                               ),
                             ],
                           ),

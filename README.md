@@ -11,13 +11,12 @@ Edit TopicEdit Topic
 Delete Topic  
 Delete Question  
 Add Question From File    
-Quiz questions should fetch only one time
-
+Quiz questions should fetch only one time  
+Sign In  
+Written Quiz  
 ## Pending
 
 Edit Question
 Separator in options
-Written Quiz
-Sign In
 Quiz feedback
 

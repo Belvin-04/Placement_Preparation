@@ -22,6 +22,11 @@ class _QuizState extends State<Quiz>{
   String selectedAnswer = "";
   bool check = false;
 
+  TextEditingController answerController = TextEditingController();
+  TextEditingController ratingController = TextEditingController();
+
+  final _formKey = GlobalKey<FormState>();
+
   @override
   void initState() {
     super.initState();
@@ -41,7 +46,7 @@ class _QuizState extends State<Quiz>{
           builder: (context,snapshot){
             if(snapshot.hasData){
               var questionData = snapshot.data;
-              return Form(
+              return Constants.quizType == "MCQ"?Form(
                   child: Column(
                     children: [
                       Text("${q+1}.${questionData?[q].question}"),
@@ -98,6 +103,60 @@ class _QuizState extends State<Quiz>{
                       }, child: Text(btnText))
                     ],
                   )
+              ):Form(
+                key: _formKey,
+                  child: Column(
+                    children: [
+                      Text("${q+1}.${questionData?[q].question}"),
+                      TextFormField(
+                        controller: answerController,
+                        validator: (val){
+                          if(val!.isEmpty){
+                            return "Please Enter Answer";
+                          }
+                        },
+                        decoration: InputDecoration(
+                          labelText: "Answer",
+                            border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(10.0)
+                            )
+                        ),
+
+                      ),
+                      TextFormField(
+                        controller: ratingController,
+                        validator: (val){
+                          if(val!.isEmpty){
+                            return "Please Enter Rating";
+                          }
+                        },
+                        decoration: InputDecoration(
+                          labelText: "Rating",
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(10.0)
+                          )
+                        ),
+                      ),
+                      ElevatedButton(onPressed: (){
+                        submitAnswer(questionData![q].getId);
+                        if(q+2 == questionData?.length){
+                          setState(() {
+                            q = q+1;
+                            btnText = "Submit";
+                          });
+                        }
+                        else if(q+1 < questionData!.length){
+                          setState(() {
+                            q = q+1;
+                          });
+                        }
+                        else if(q+1 == questionData!.length){
+
+                          Navigator.pop(context);
+                        }
+                      }, child: Text(btnText))
+                    ],
+                  )
               );
             }
             else{
@@ -112,7 +171,7 @@ class _QuizState extends State<Quiz>{
   Future<List<Question>> getQuestions(int topicId) async {
     List<Question> questions = [];
     var url = Uri.http(Constants.baseURL, Constants.questionPath,
-        {"t_id": "$topicId","type":"MCQ"});
+        {"t_id": "$topicId","type":Constants.quizType});
 
     print(url);
     var response = await http.get(url);
@@ -127,69 +186,17 @@ class _QuizState extends State<Quiz>{
     }
     return questions;
   }
+
+  submitAnswer(int id) async{
+    var url = Uri.http(Constants.baseURL, Constants.questionPath);
+
+    // Await the http get response, then decode the json-formatted response.
+    var response = await http.post(url, body: {"question_id": id.toString(),"answer":answerController.value.text,"rating":ratingController.value.text,"email":Constants.userEmail});
+  }
 }
 
 
-/*
-
-Form(
-                child: Column(
-                  children: [
-                    Text("${q+1}.${questions[q].question}"),
-                    TextFormField(),
-                    TextFormField(),
-                    ElevatedButton(onPressed: (){
-                      if(q+2 == questions.length){
-                        setState(() {
-                          q = q+1;
-                          btnText = "Submit";
-                        });
-                      }
-                      else if(q+1 < questions.length){
-                        setState(() {
-                          q = q+1;
-                        });
-                      }
-                      else if(q+1 == questions.length){
-                        Navigator.pop(context);
-                      }
-                    }, child: Text(btnText))
-                  ],
-                )
-              );
-            }
-            else if(loaded){
-              return Form(
-                  child: Column(
-                    children: [
-                      Text("${q+1}.${questions[q].question}"),
-                      TextFormField(),
-                      TextFormField(),
-                      ElevatedButton(onPressed: (){
-                        if(q+2 == questions.length){
-                          setState(() {
-                            q = q+1;
-                            btnText = "Submit";
-                          });
-                        }
-                        else if(q+1 < questions.length){
-                          setState(() {
-                            q = q+1;
-                          });
-                        }
-                        else if(q+1 == questions.length){
-                          Navigator.pop(context);
-                        }
-                      }, child: Text(btnText))
-                    ],
-                  )
-              );
-            }
-            else{
-              return CircularProgressIndicator();
-            }
-          },
-        )
 
 
- */
+
+

@@ -52,6 +52,12 @@ function addQuestion(){
 
 if($_SERVER["REQUEST_METHOD"] == "GET"){
     if(isset($_GET["q_id"])){
+        $sql = $conn->prepare("SELECT * FROM (SELECT qd.id as id,qd.question as question,qd.topic_id as topic_id,qd.level as level,
+        GROUP_CONCAT(mo.choice) as `choices`FROM `question_details` qd JOIN `mcq_options` mo ON qd.id = mo.question_id JOIN 
+        `question_answer_relation` qar ON qar.question_id = qd.id AND qd.topic_id=? AND qd.type_id = ? GROUP BY qd.id) a JOIN 
+        (SELECT qd.id as id,mo.choice as choice FROM `question_details` qd JOIN `mcq_options` mo ON qd.id = mo.question_id JOIN 
+        `question_answer_relation` qar ON qar.question_id = qd.id AND qd.topic_id=? AND qd.type_id = ? AND mo.id = qar.answer_id GROUP BY 
+        qd.id) b ON a.id = b.id");
     }
     
     else if(isset($_GET["t_id"]) && isset($_GET["type"]) && $_GET["type"] == "WRITTEN"){
@@ -138,7 +144,13 @@ if($_SERVER["REQUEST_METHOD"] == "GET"){
     }
 }
 else if($_SERVER["REQUEST_METHOD"] == "POST"){
-    if(isset($_POST["question"]) && isset($_POST["level"]) && isset($_POST["topic"]) && isset($_POST["type"]) && isset($_POST["options"])
+
+    if(isset($_POST["question_id"]) && isset($_POST["answer"]) && isset($_POST["rating"]) && isset($_POST["email"])){
+        $sql = "INSERT INTO answer_history (question_id,answer,email,user_rating) VALUES (".$_POST["question_id"].",'".$_POST["answer"]."','".$_POST["email"]."',".$_POST["rating"].")";
+        $conn->query($sql);
+    }
+
+    else if(isset($_POST["question"]) && isset($_POST["level"]) && isset($_POST["topic"]) && isset($_POST["type"]) && isset($_POST["options"])
      && isset($_POST["correctAnswer"])){
 
         // $sql = $conn->prepare("INSERT INTO question_details(`question`,`type_id`,`topic_id`,`level`) VALUES(?,?,?,?)");
