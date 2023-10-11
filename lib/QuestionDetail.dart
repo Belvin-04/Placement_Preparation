@@ -47,128 +47,134 @@ class _QuestionDetailState extends State<QuestionDetail> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text("Question Detail"),
-      ),
-      body: Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: Form(
-            key: _formKey,
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                TextFormField(
-                  onChanged: (val){
-                    widget.question.setQuestion = val;
-                  },
-                  validator: (val){
-                    if(val!.isEmpty){
-                      return "Please enter Question";
-                    }
-                    return null;
-                  },
-                  controller: questionController,
-                  decoration: InputDecoration(
-                      labelText: "Question",
-                      border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(10.0))),
-                ),
-                Container(margin: EdgeInsets.only(bottom: 10.0),),
-                TextFormField(
-                  onChanged: (val){
-                    int level = int.parse(val);
-                    widget.question.setLevel = level;
-                  },
-                  validator: (val){
-                    if(val!.isEmpty){
-                      return "Please enter Level";
-                    }
-                    return null;
-                  },
-                  controller: levelController,
-                  decoration: InputDecoration(
-                      labelText: "Level",
-                      border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(10.0))),
-                ),
-                Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Expanded(
-                      child: RadioListTile(
-                          tileColor: Colors.grey[300],
-                          title: Text("MCQ"),
-                          value: Type.mcq,
-                          groupValue: selectedValue,
-                          onChanged: (val) {
-                            setState(() {
-                              widget.question.setType = "MCQ";
-                              selectedValue = val!;
-                              visible = true;
+    return WillPopScope(
+      onWillPop: () async{
+        Navigator.pop(context,1);
+        return false;
+      },
+      child: Scaffold(
+        appBar: AppBar(
+          title: Text("Question Detail"),
+        ),
+        body: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Form(
+              key: _formKey,
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  TextFormField(
+                    onChanged: (val){
+                      widget.question.setQuestion = val;
+                    },
+                    validator: (val){
+                      if(val!.isEmpty){
+                        return "Please enter Question";
+                      }
+                      return null;
+                    },
+                    controller: questionController,
+                    decoration: InputDecoration(
+                        labelText: "Question",
+                        border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(10.0))),
+                  ),
+                  Container(margin: EdgeInsets.only(bottom: 10.0),),
+                  TextFormField(
+                    onChanged: (val){
+                      int level = int.parse(val);
+                      widget.question.setLevel = level;
+                    },
+                    validator: (val){
+                      if(val!.isEmpty){
+                        return "Please enter Level";
+                      }
+                      return null;
+                    },
+                    controller: levelController,
+                    decoration: InputDecoration(
+                        labelText: "Level",
+                        border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(10.0))),
+                  ),
+                  Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Expanded(
+                        child: RadioListTile(
+                            tileColor: Colors.grey[300],
+                            title: Text("MCQ"),
+                            value: Type.mcq,
+                            groupValue: selectedValue,
+                            onChanged: (val) {
+                              setState(() {
+                                widget.question.setType = "MCQ";
+                                selectedValue = val!;
+                                visible = true;
+                              });
+                            }),
+                      ),
+                      Container(
+                        margin: EdgeInsets.only(left: 10.0),
+                      ),
+                      Expanded(
+                        child: RadioListTile(
+                            tileColor: Colors.grey[300],
+                            title: Text("Written"),
+                            value: Type.written,
+                            groupValue: selectedValue,
+                            onChanged: (val) {
+                              setState(() {
+                                widget.question.setType = "WRITTEN";
+                                selectedValue = val!;
+                                visible = false;
+                              });
+                            }),
+                      ),
+                    ],
+                  ),
+                  Visibility(
+                      visible: visible,
+                      child: ListView.builder(
+                          shrinkWrap: true,
+                          itemCount: widget.question.getOptions.length,
+                          itemBuilder: (context, index) {
+                            return RadioListTile(title:Text(options[index]),value: options[index], groupValue: correctOption, onChanged: (val){
+                              setState(() {
+                                correctOption = val!;
+                                widget.question.setCorrectAnswer = val;
+                              });
                             });
-                          }),
-                    ),
-                    Container(
-                      margin: EdgeInsets.only(left: 10.0),
-                    ),
-                    Expanded(
-                      child: RadioListTile(
-                          tileColor: Colors.grey[300],
-                          title: Text("Written"),
-                          value: Type.written,
-                          groupValue: selectedValue,
-                          onChanged: (val) {
-                            setState(() {
-                              widget.question.setType = "WRITTEN";
-                              selectedValue = val!;
-                              visible = false;
-                            });
-                          }),
-                    ),
-                  ],
-                ),
-                Visibility(
-                    visible: visible,
-                    child: ListView.builder(
-                        shrinkWrap: true,
-                        itemCount: widget.question.getOptions.length,
-                        itemBuilder: (context, index) {
-                          return RadioListTile(title:Text(options[index]),value: options[index], groupValue: correctOption, onChanged: (val){
-                            setState(() {
-                              correctOption = val!;
-                              widget.question.setCorrectAnswer = val;
-                            });
-                          });
-                        })),
-                Container(margin: EdgeInsets.only(bottom: 10.0),),
-                Visibility(visible: visible,child: ElevatedButton(child: Text("Add Option"),onPressed: (){
-                  showAddOptionDialog("");
-                },)),
-                Container(margin: EdgeInsets.only(bottom: 10.0),),
-                ElevatedButton(onPressed: (){
-                  if(_formKey.currentState!.validate()){
-                    if(selectedValue == Type.written){
-                      addQuestion(widget.question);
+                          })),
+                  Container(margin: EdgeInsets.only(bottom: 10.0),),
+                  Visibility(visible: visible,child: ElevatedButton(child: Text("Add Option"),onPressed: (){
+                    showAddOptionDialog("");
+                  },)),
+                  Container(margin: EdgeInsets.only(bottom: 10.0),),
+                  ElevatedButton(onPressed: (){
+                    if(_formKey.currentState!.validate()){
+                      if(selectedValue == Type.written){
+                        addQuestion(widget.question);
+                      }
+                      else if(options.length < 2){
+                        showDialog(context: context, builder: (context){
+                          return AlertDialog(
+                            title: Text("Error"),
+                            content: Text("Add atleast two options"),
+                            actions: [
+                              TextButton(onPressed: (){Navigator.pop(context);}, child: Text("OK"))
+                            ],
+                          );
+                        });
+                      }
+                      else{
+                        addQuestion(widget.question);
+                      }
                     }
-                    else if(options.length < 2){
-                      showDialog(context: context, builder: (context){
-                        return AlertDialog(
-                          title: Text("Error"),
-                          content: Text("Add atleast two options"),
-                          actions: [
-                            TextButton(onPressed: (){Navigator.pop(context);}, child: Text("OK"))
-                          ],
-                        );
-                      });
-                    }
-                    else{
-                      addQuestion(widget.question);
-                    }
-                  }
-                }, child: Text("Add Question"))
-              ],
-            )),
+                  }, child: Text("Add Question"))
+                ],
+              )),
+        ),
       ),
     );
   }

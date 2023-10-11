@@ -22,10 +22,15 @@ class _QuestionsState extends State<Questions> {
   Widget build(BuildContext context) {
     return Scaffold(
       floatingActionButton: FloatingActionButton(
-        onPressed: () {
+        onPressed: () async {
           Question q = Question("","WRITTEN",0);
           q.setTopic = widget.topic;
-          Navigator.push(context, MaterialPageRoute(builder: (context)=>QuestionDetail(q)));
+          int res = await Navigator.push(context, MaterialPageRoute(builder: (context)=>QuestionDetail(q)));
+          if(res == 1){
+            setState(() {
+
+            });
+          }
           // addQuestionsFromFile();
         },
         child: Icon(Icons.add),
