@@ -144,12 +144,39 @@ class _QuestionDetailState extends State<QuestionDetail> {
                           shrinkWrap: true,
                           itemCount: widget.question.getOptions.length,
                           itemBuilder: (context, index) {
-                            return RadioListTile(title:Text(options[index]),value: options[index], groupValue: correctOption, onChanged: (val){
-                              setState(() {
-                                correctOption = val!;
-                                widget.question.setCorrectAnswer = val;
-                              });
-                            });
+                            return Row(
+                              children: [
+                                Expanded(
+                                  flex:10,
+                                  child: RadioListTile(title:Text(options[index]),value: options[index], groupValue: correctOption, onChanged: (val){
+                                    setState(() {
+                                      correctOption = val!;
+                                      widget.question.setCorrectAnswer = val;
+                                    });
+                                  },),
+                                ),
+                                Expanded(
+                                  flex:1,
+                                  child: Row(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      Expanded(
+                                          child:IconButton(icon: Icon(Icons.edit),color: Colors.blue, onPressed: () {
+                                            showUpdateOptionDialog(options[index],index);
+                                          },)
+                                      ),
+                                      Expanded(
+                                          child:IconButton(icon: Icon(Icons.delete),color: Colors.red, onPressed: () {
+                                            setState(() {
+                                              options.removeAt(index);
+                                            });
+                                          },)
+                                      )
+                                    ],
+                                  ),
+                                )
+                              ],
+                            );
                           })),
                   Container(margin: EdgeInsets.only(bottom: 10.0),),
                   Visibility(visible: visible,child: ElevatedButton(child: Text("Add Option"),onPressed: (){
@@ -255,5 +282,44 @@ class _QuestionDetailState extends State<QuestionDetail> {
     SnackBar snackBar = SnackBar(content: Text(message));
     ScaffoldMessenger.of(context).removeCurrentSnackBar();
     ScaffoldMessenger.of(context).showSnackBar(snackBar);
+  }
+
+  void showUpdateOptionDialog(String option,int index) {
+    optionController.text = option;
+    showDialog(context: context, builder: (context){
+      return AlertDialog(
+        title: Text("Option"),
+        content: Form(
+          key:_optionKey,
+          child: TextFormField(
+            controller: optionController,
+            validator:(val){
+              if(val!.isEmpty){
+                return "Please enter option";
+              }
+              return null;
+            },
+            decoration: InputDecoration(labelText:"Option",border: OutlineInputBorder(borderRadius: BorderRadius.circular(10.0))),
+          ),
+        ),
+        actions: [
+          TextButton(onPressed: (){
+            if(_optionKey.currentState!.validate()){
+              setState(() {
+                options[index] = optionController.value.text;
+                widget.question.setOptions = options;
+                optionController.text = "";
+                if(correctOption == ""){
+                  correctOption = options[0];
+                  widget.question.setCorrectAnswer = correctOption;
+                }
+                Navigator.pop(context);
+              });
+            }
+          }, child: Text("Ok")),
+          TextButton(onPressed: (){Navigator.pop(context);}, child: Text("Cancel")),
+        ],
+      );
+    });
   }
 }
