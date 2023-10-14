@@ -1,6 +1,8 @@
+import 'package:flutter/material.dart';
+
 class Constants{
-  // static String baseURL = "192.168.0.103";
-  static String baseURL = "10.80.8.114";
+  static String baseURL = "192.168.0.103";
+  // static String baseURL = "10.80.8.114";
 
   static String questionPath = "Placement Preparation/Server/questions.php";
   static String topicPath = "Placement Preparation/Server/topics.php";
@@ -11,4 +13,10 @@ class Constants{
   static String userName = "";
 
   static String quizType = "";
+
+  static void showSnackBar(String message, BuildContext context) {
+    SnackBar snackBar = SnackBar(content: Text(message));
+    ScaffoldMessenger.of(context).removeCurrentSnackBar();
+    ScaffoldMessenger.of(context).showSnackBar(snackBar);
+  }
 }

@@ -23,15 +23,33 @@ class _QuestionsState extends State<Questions> {
     return Scaffold(
       floatingActionButton: FloatingActionButton(
         onPressed: () async {
-          Question q = Question("","WRITTEN",0);
-          q.setTopic = widget.topic;
-          int res = await Navigator.push(context, MaterialPageRoute(builder: (context)=>QuestionDetail(q)));
-          if(res == 1){
-            setState(() {
+          showDialog(context: context, builder: (context){
+            return AlertDialog(
+              content: Container(
+                height: 80.0,
+                child: Column(
+                  children: [
+                    ElevatedButton(onPressed: () async{
+                      Question q = Question("","WRITTEN",0);
+                      q.setTopic = widget.topic;
+                      int res = await Navigator.push(context, MaterialPageRoute(builder: (context)=>QuestionDetail(q)));
+                      if(res == 1){
+                        setState(() {
 
-            });
-          }
-          // addQuestionsFromFile();
+                        });
+                      }
+                    }, child: Text("Add Question")),
+                    Container(margin: EdgeInsets.only(bottom: 10.0),),
+                    ElevatedButton(onPressed: (){
+                      addQuestionsFromFile();
+                    }, child: Text("Add Questions from file")),
+                  ],
+                ),
+              ),
+            );
+          });
+
+
         },
         child: Icon(Icons.add),
       ),
@@ -163,6 +181,10 @@ class _QuestionsState extends State<Questions> {
         //   questions.add(Question.toQuestion(b[i], widget.topic));
         // }
         // return questions;
+        Navigator.pop(context);
+        setState(() {
+
+        });
       } else {
         // return [];
       }

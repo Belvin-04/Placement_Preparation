@@ -39,6 +39,7 @@ class _LoginState extends State<Login> {
                 labelText: "Email",
                 border: OutlineInputBorder(borderRadius: BorderRadius.circular(10.0))
               ),),
+              Container(margin: EdgeInsets.only(bottom: 10.0),),
               TextFormField(
                 validator: (val){
                   if(val!.isEmpty){
@@ -55,8 +56,14 @@ class _LoginState extends State<Login> {
               ),),
               ElevatedButton(onPressed: () async {
                 if(_formKey.currentState!.validate()){
-                  Constants.userType = await login(emailController.value.text,passwordController.value.text);
-                  Navigator.push(context, MaterialPageRoute(builder: (context)=>Topics()));
+                   int code = await login(emailController.value.text,passwordController.value.text);
+                   if(code == 404){
+                     Constants.showSnackBar("User does not exist", context);
+                   }
+                   else{
+                     Constants.userType = code;
+                     Navigator.push(context, MaterialPageRoute(builder: (context)=>Topics()));
+                   }
                 }
               }, child: Text("Login"))
             ],

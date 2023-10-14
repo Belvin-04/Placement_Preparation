@@ -82,8 +82,13 @@ class _QuestionDetailState extends State<QuestionDetail> {
                   Container(margin: EdgeInsets.only(bottom: 10.0),),
                   TextFormField(
                     onChanged: (val){
-                      int level = int.parse(val);
-                      widget.question.setLevel = level;
+                      if(val.isNotEmpty){
+                        int level = int.parse(val);
+                        widget.question.setLevel = level;
+                      }
+                      else{
+                        widget.question.setLevel = 0;
+                      }
                     },
                     validator: (val){
                       if(val!.isEmpty){
