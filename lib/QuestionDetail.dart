@@ -263,17 +263,34 @@ class _QuestionDetailState extends State<QuestionDetail> {
   void addQuestion(Question question) async{
     var url = Uri.http(Constants.baseURL, Constants.questionPath);
     var questionMap = Question.toMap(widget.question);
+     var op = "";
+
+     for(int i=0; i<question.getOptions.length;i++){
+       if(i == question.getOptions.length - 1){
+         op = "$op${question.getOptions[i]}";
+       }
+       else{
+         op = "$op${question.getOptions[i]}/////";
+       }
+
+     }
+
+     op = "["+op+"]";
+
+
     questionMap["topic"] = questionMap["topic"]["id"].toString();
     questionMap["id"] = questionMap["id"].toString();
     questionMap["level"] = questionMap["level"].toString();
-    questionMap["options"] = questionMap["options"].toString();
+    questionMap["options"] = op;
 
+
+    print(questionMap);
     // Await the http get response, then decode the json-formatted response.
     var jsonQuestionMap = jsonEncode(questionMap);
 
 
     var response = await http.post(url, body: questionMap);
-    print(response.body);
+
 
     if (response.statusCode == 201) {
       int questionId = jsonDecode(response.body)["question_id"];
@@ -343,7 +360,7 @@ class _QuestionDetailState extends State<QuestionDetail> {
       var data1 = data["body"];
       String options1 = data1["options"];
       String correct = data1["correctAnswer"];
-      question.setOptions = options1.split(",");
+      question.setOptions = options1.split("/////");
       question.setCorrectAnswer = correct;
 
       setState(() {
@@ -356,10 +373,25 @@ class _QuestionDetailState extends State<QuestionDetail> {
 
   void editQuestion(Question question) async {
     var questionMap = Question.toMap(widget.question);
+
+    var op = "";
+
+    for(int i=0; i<question.getOptions.length;i++){
+      if(i == question.getOptions.length - 1){
+        op = "$op${question.getOptions[i]}";
+      }
+      else{
+        op = "$op${question.getOptions[i]}/////";
+      }
+
+    }
+
+    op = "["+op+"]";
+
     questionMap["topic"] = questionMap["topic"]["id"].toString();
     questionMap["id"] = questionMap["id"].toString();
     questionMap["level"] = questionMap["level"].toString();
-    questionMap["options"] = questionMap["options"].toString();
+    questionMap["options"] = op;
 
     var url = Uri.http(Constants.baseURL, Constants.questionPath,{"q_id":question.getId.toString()});
     var response = await http.patch(url,body: questionMap);

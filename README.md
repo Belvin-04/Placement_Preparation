@@ -14,8 +14,8 @@ Add Question From File
 Quiz questions should fetch only one time  
 Sign In  
 Written Quiz  
-Edit Question   
-## Pending
+Edit Question  
 Separator in options  
+## Pending
 Quiz feedback  
 

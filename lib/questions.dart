@@ -158,7 +158,7 @@ class _QuestionsState extends State<Questions> {
           }else if(c == "D"){
             q.setLevel =  excel[table].cell(CellIndex.indexByString("$c${i+2}")).value as int;
           }else if(c == "E"){
-            var op = excel[table].cell(CellIndex.indexByString("$c${i+2}")).value.toString().split(",");
+            var op = excel[table].cell(CellIndex.indexByString("$c${i+2}")).value.toString().split("/////");
             if(op.length >= 2){
               q.setOptions = op;
             }
