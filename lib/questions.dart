@@ -30,6 +30,7 @@ class _QuestionsState extends State<Questions> {
                 child: Column(
                   children: [
                     ElevatedButton(onPressed: () async{
+                      Constants.questionOperation = false;
                       Question q = Question("","WRITTEN",0);
                       q.setTopic = widget.topic;
                       int res = await Navigator.push(context, MaterialPageRoute(builder: (context)=>QuestionDetail(q)));
@@ -69,10 +70,17 @@ class _QuestionsState extends State<Questions> {
                         trailing: Row(
                           mainAxisSize: MainAxisSize.min,
                           children: [
-                            IconButton(icon: Icon(Icons.edit,color: Colors.blue,),onPressed: (){
+                            IconButton(icon: Icon(Icons.edit,color: Colors.blue,),onPressed: () async{
+                              Constants.questionOperation = true;
                               Question q = snapshot.data![index];
                               q.setTopic = widget.topic;
-                              Navigator.push(context, MaterialPageRoute(builder: (context)=>QuestionDetail(q)));
+                              int c = await Navigator.push(context, MaterialPageRoute(builder: (context)=>QuestionDetail(q)));
+                              if(c==1){
+                                setState(() {
+
+                                });
+                              }
+
                             },),
                             IconButton(icon: Icon(Icons.delete,color: Colors.red,),onPressed: (){
                               showDialog(context: context, builder: (context){

@@ -14,6 +14,8 @@ class Constants{
 
   static String quizType = "";
 
+  static bool questionOperation = false;
+
   static void showSnackBar(String message, BuildContext context) {
     SnackBar snackBar = SnackBar(content: Text(message));
     ScaffoldMessenger.of(context).removeCurrentSnackBar();

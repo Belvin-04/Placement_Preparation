@@ -41,6 +41,7 @@ class _QuestionDetailState extends State<QuestionDetail> {
     if(widget.question.getType == "MCQ"){
       selectedValue = Type.mcq;
       visible = true;
+      getOptions(widget.question);
     }
   }
 
@@ -186,7 +187,12 @@ class _QuestionDetailState extends State<QuestionDetail> {
                   ElevatedButton(onPressed: (){
                     if(_formKey.currentState!.validate()){
                       if(selectedValue == Type.written){
-                        addQuestion(widget.question);
+                        if(Constants.questionOperation){
+                          editQuestion(widget.question);
+                        }
+                        else{
+                          addQuestion(widget.question);
+                        }
                       }
                       else if(options.length < 2){
                         showDialog(context: context, builder: (context){
@@ -200,10 +206,15 @@ class _QuestionDetailState extends State<QuestionDetail> {
                         });
                       }
                       else{
-                        addQuestion(widget.question);
+                        if(Constants.questionOperation){
+                          editQuestion(widget.question);
+                        }
+                        else{
+                          addQuestion(widget.question);
+                        }
                       }
                     }
-                  }, child: Text("Add Question"))
+                  }, child: Text(Constants.questionOperation?"Edit Question":"Add Question"))
                 ],
               )),
         ),
@@ -321,5 +332,42 @@ class _QuestionDetailState extends State<QuestionDetail> {
         ],
       );
     });
+  }
+
+  void getOptions(Question question) async{
+    var url = Uri.http(Constants.baseURL, Constants.questionPath,{"options":question.getId.toString()});
+
+    var response = await http.get(url);
+    if(response.statusCode == 200){
+      var data = jsonDecode(response.body);
+      var data1 = data["body"];
+      String options1 = data1["options"];
+      String correct = data1["correctAnswer"];
+      question.setOptions = options1.split(",");
+      question.setCorrectAnswer = correct;
+
+      setState(() {
+        widget.question = question;
+        options = widget.question.getOptions;
+        correctOption = widget.question.getCorrectAnswer;
+      });
+    }
+  }
+
+  void editQuestion(Question question) async {
+    var questionMap = Question.toMap(widget.question);
+    questionMap["topic"] = questionMap["topic"]["id"].toString();
+    questionMap["id"] = questionMap["id"].toString();
+    questionMap["level"] = questionMap["level"].toString();
+    questionMap["options"] = questionMap["options"].toString();
+
+    var url = Uri.http(Constants.baseURL, Constants.questionPath,{"q_id":question.getId.toString()});
+    var response = await http.patch(url,body: questionMap);
+    if(response.statusCode == 200){
+      Navigator.pop(context,1);
+    }
+    else{
+      print(response.body);
+    }
   }
 }
