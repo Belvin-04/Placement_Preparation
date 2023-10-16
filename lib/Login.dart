@@ -81,15 +81,18 @@ class _LoginState extends State<Login> {
     var response = await http.post(url, body: {"email": email,"pswd":"${md5.convert(utf8.encode(password))}"});
     print(response.statusCode);
 
-    if(email == "admin" && password == "admin"){
-      return 1;
-    }
     if (response.statusCode == 200) {
       var data = jsonDecode(response.body);
       print(data);
-      Constants.userEmail = data["body"]["email"];
-      print(Constants.userEmail);
-      return 2;
+      Constants.userEmail = data["body"]["id"];
+
+      if(data["body"]["user"] == "Faculty"){
+        return 1;
+      }
+      else if(data["body"]["user"] == "Student"){
+        return 2;
+      }
+      return 404;
     }
     else{
       return 404;

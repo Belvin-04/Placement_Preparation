@@ -228,9 +228,10 @@ if($_SERVER["REQUEST_METHOD"] == "GET"){
 }
 else if($_SERVER["REQUEST_METHOD"] == "POST"){
 
-    if(isset($_POST["question_id"]) && isset($_POST["answer"]) && isset($_POST["rating"]) && isset($_POST["email"])){
-        $sql = "INSERT INTO answer_history (question_id,answer,email,user_rating) VALUES (".$_POST["question_id"].",'".$_POST["answer"]."','".$_POST["email"]."',".$_POST["rating"].")";
+    if(isset($_POST["question_id"]) && isset($_POST["answer"]) && isset($_POST["rating"]) && isset($_POST["id"])){
+        $sql = "INSERT INTO answer_history (question_id,answer,student_id,user_rating) VALUES (".$_POST["question_id"].",'".$_POST["answer"]."',".$_POST["id"].",".$_POST["rating"].")";
         $conn->query($sql);
+        echo $sql;
     }
 
     else if(isset($_POST["question"]) && isset($_POST["level"]) && isset($_POST["topic"]) && isset($_POST["type"]) && isset($_POST["options"])

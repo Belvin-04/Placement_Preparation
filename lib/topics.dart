@@ -32,6 +32,16 @@ class _TopicsState extends State<Topics> {
       ),
       appBar: AppBar(
         title: Text("Topics"),
+        actions: [
+          TextButton(child: Text("Quiz Answer Reviews",style: TextStyle(color: Colors.white),),onPressed: (){
+            if(Constants.userType == 1){
+
+            }
+            else{
+
+            }
+          },)
+        ],
       ),
       body: FutureBuilder(
           future: getTopics(),

@@ -8,23 +8,38 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
     if(isset($_POST["email"]) && isset($_POST["pswd"])){
         $email = $_POST["email"];
         $pwd = $_POST["pswd"];
-        $sql = $conn->prepare("SELECT fn,ln FROM student WHERE email = ? AND pswd = ?");
+        $sql = $conn->prepare("SELECT fn,ln FROM student WHERE enroll = ? AND pswd = ?");
         $sql->bind_param("ss",$email,$pwd);
         $sql->execute();
 
         $res = $sql->get_result();
 
         if($res->num_rows == 0){
-            header("Content-Type:application/json");
-            http_response_code(404);
-            echo json_encode(array("message"=>"User Not Found"));
+            $sql = $conn->prepare("SELECT fn,ln FROM faculty WHERE fid = ? AND pswd = ?");
+            $sql->bind_param("ss",$email,$pwd);
+            $sql->execute();
+
+            $res = $sql->get_result();
+            if($res->num_rows == 0){
+                header("Content-Type:application/json");
+                http_response_code(404);
+                echo json_encode(array("message"=>"User Not Found"));
+            }
+            else{
+                $data = $res->fetch_assoc();
+                $name = ucfirst($data["fn"]) ." ". ucfirst($data["ln"]);
+                header("Content-Type:application/json");
+                http_response_code(200);
+                echo json_encode(array("message"=>"User Found","body"=>array("id"=>$email,"Name"=>$name,"user"=>"Faculty")));    
+            }
+            
         }
         else{
             $data = $res->fetch_assoc();
             $name = ucfirst($data["fn"]) ." ". ucfirst($data["ln"]);
             header("Content-Type:application/json");
             http_response_code(200);
-            echo json_encode(array("message"=>"User Found","body"=>array("email"=>$email,"Name"=>$name)));
+            echo json_encode(array("message"=>"User Found","body"=>array("id"=>$email,"Name"=>$name,"user"=>"Student")));
         }
     }
     else{

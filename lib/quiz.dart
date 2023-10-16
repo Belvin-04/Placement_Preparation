@@ -39,6 +39,7 @@ class _QuizState extends State<Quiz>{
     return Scaffold(
       appBar: AppBar(
         title: Text("Quiz"),
+
       ),
       body: Center(
         child: FutureBuilder(
@@ -84,6 +85,7 @@ class _QuizState extends State<Quiz>{
                         });
                       }, child: Text("Check")),
                       ElevatedButton(onPressed: (){
+
                         if(q+2 == questionData?.length){
                           setState(() {
                             check = false;
@@ -138,7 +140,10 @@ class _QuizState extends State<Quiz>{
                         ),
                       ),
                       ElevatedButton(onPressed: (){
+
                         submitAnswer(questionData![q].getId);
+                        answerController.text = "";
+                        ratingController.text = "";
                         if(q+2 == questionData?.length){
                           setState(() {
                             q = q+1;
@@ -191,7 +196,8 @@ class _QuizState extends State<Quiz>{
     var url = Uri.http(Constants.baseURL, Constants.questionPath);
 
     // Await the http get response, then decode the json-formatted response.
-    var response = await http.post(url, body: {"question_id": id.toString(),"answer":answerController.value.text,"rating":ratingController.value.text,"email":Constants.userEmail});
+    var response = await http.post(url, body: {"question_id": id.toString(),"answer":answerController.value.text,"rating":ratingController.value.text,"id":Constants.userEmail});
+    print(response.body);
   }
 }
 
