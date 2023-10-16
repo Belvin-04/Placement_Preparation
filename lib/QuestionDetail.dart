@@ -295,7 +295,14 @@ class _QuestionDetailState extends State<QuestionDetail> {
     if (response.statusCode == 201) {
       int questionId = jsonDecode(response.body)["question_id"];
       showSnackBar("Question Added");
-      print("Hello");
+      setState(() {
+        visible = false;
+        questionController.text = "";
+        levelController.text = "0";
+        options = [];
+        selectedValue = Type.written;
+        widget.question.setOptions = options;
+      });
 
     } else if(response.statusCode == 409) {
       //return Topic("409",409);
