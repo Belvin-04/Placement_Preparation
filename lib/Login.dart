@@ -54,6 +54,7 @@ class _LoginState extends State<Login> {
                   labelText: "Password",
                   border: OutlineInputBorder(borderRadius: BorderRadius.circular(10.0))
               ),),
+              Container(margin: EdgeInsets.only(bottom: 10.0),),
               ElevatedButton(onPressed: () async {
                 if(_formKey.currentState!.validate()){
                    int code = await login(emailController.value.text,passwordController.value.text);

@@ -120,6 +120,28 @@ if($_SERVER["REQUEST_METHOD"] == "GET"){
             echo json_encode(array("message"=>"Options Found","body"=>array("options"=>$data["choices"],"correctAnswer"=>$data["correct"])));
         }
     }
+
+    else if(isset($_GET["check"]) && isset($_GET["id"])){
+        $type = 1;
+        $sql = $conn->prepare("SELECT * FROM question_details WHERE topic_id = ? AND type_id = ?");
+        $sql->bind_param("ii",$_GET["id"],$type);
+        $sql->execute();
+        $res = $sql->get_result();
+
+        $mcqQues = $res->num_rows;
+        
+        $type = 2;
+        $sql = $conn->prepare("SELECT * FROM question_details WHERE topic_id = ? AND type_id = ?");
+        $sql->bind_param("ii",$_GET["id"],$type);
+        $sql->execute();
+        $res = $sql->get_result();
+
+        $writtenQues = $res->num_rows;
+
+        header("Content-Type:application/json");
+        http_response_code(200);
+        echo json_encode(array("mcq"=>$mcqQues,"written"=>$writtenQues));
+    }
     
     else if(isset($_GET["t_id"]) && isset($_GET["type"]) && $_GET["type"] == "WRITTEN"){
         $sql = $conn->prepare("SELECT * FROM question_details WHERE topic_id = ? AND type_id = ?");

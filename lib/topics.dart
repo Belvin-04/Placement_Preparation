@@ -16,6 +16,8 @@ class Topics extends StatefulWidget {
 class _TopicsState extends State<Topics> {
   var topicController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
+  bool mcqBtnState = true;
+  bool writtenBtnState = true;
 
   @override
   Widget build(BuildContext context) {
@@ -39,28 +41,33 @@ class _TopicsState extends State<Topics> {
                   itemCount: snapshot.data?.length,
                   itemBuilder: (context, index) {
                     return GestureDetector(
-                      onTap: () {
+                      onTap: () async{
                         if(Constants.userType == 1){
                           Navigator.push(context, MaterialPageRoute(builder: (context)=>Questions(Topic(snapshot.data![index].getName,snapshot.data![index].getId))));
                         }
                         else{
+                          await checkQuiz(snapshot.data![index]);
                           showDialog(context: context, builder: (context){
                             return AlertDialog(
                               content: Container(
                                 height: 80,
                                 child: Column(
                                   children: [
-                                    ElevatedButton(onPressed: (){
+                                    ElevatedButton(
+                                      style: ElevatedButton.styleFrom(backgroundColor: (mcqBtnState)?Colors.blue:Colors.grey),
+                                        onPressed: (mcqBtnState)?(){
                                       Constants.quizType = "MCQ";
                                       Navigator.push(context, MaterialPageRoute(builder: (context) => Quiz(Topic(snapshot.data![index].getName, snapshot.data![index].getId))));
-                                    }, child: Text("MCQ")),
+                                    }:(){}, child: Text("MCQ")),
                                     Container(
                                       margin: EdgeInsets.only(bottom: 20.0),
                                     ),
-                                    ElevatedButton(onPressed: (){
+                                    ElevatedButton(
+                                        style: ElevatedButton.styleFrom(backgroundColor: (writtenBtnState)?Colors.blue:Colors.grey),
+                                        onPressed: (writtenBtnState)?(){
                                       Constants.quizType = "WRITTEN";
                                       Navigator.push(context, MaterialPageRoute(builder: (context) => Quiz(Topic(snapshot.data![index].getName, snapshot.data![index].getId))));
-                                    }, child: Text("WRITTEN"))
+                                    }:(){}, child: Text("WRITTEN"))
                                   ],
                                 ),
                               ),
@@ -288,6 +295,20 @@ class _TopicsState extends State<Topics> {
       return Topic("409", 409);
     } else {
       return Topic("Error",topic.getId);
+    }
+  }
+
+  checkQuiz(Topic t) async{
+    var url = Uri.http(Constants.baseURL,Constants.questionPath,{"check":"1","id":t.getId.toString()});
+    var response = await http.get(url);
+
+    if(response.statusCode == 200){
+      var data = jsonDecode(response.body);
+      mcqBtnState = data["mcq"] != 0;
+      writtenBtnState = data["written"] != 0;
+    }
+    else{
+      print(response.body);
     }
   }
 }
