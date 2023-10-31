@@ -1,6 +1,8 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:placement_preparation/QuizFeedbackList.dart';
+import 'package:placement_preparation/SemesterList.dart';
 import 'package:placement_preparation/questions.dart';
 import 'package:placement_preparation/quiz.dart';
 import 'Models/Topic.dart';
@@ -35,10 +37,10 @@ class _TopicsState extends State<Topics> {
         actions: [
           TextButton(child: Text("Quiz Answer Reviews",style: TextStyle(color: Colors.white),),onPressed: (){
             if(Constants.userType == 1){
-
+              selectCourseDialog();
             }
             else{
-
+              Navigator.push(context, MaterialPageRoute(builder: (context)=>QuizFeedbackList()));
             }
           },)
         ],
@@ -320,5 +322,31 @@ class _TopicsState extends State<Topics> {
     else{
       print(response.body);
     }
+  }
+
+  void selectCourseDialog() {
+    showDialog(context: context, builder: (context){
+      return AlertDialog(
+        title: Text("Select Course"),
+        content: Container(
+          height: 70,
+          child: Column(
+            children: [
+              ElevatedButton(onPressed: (){
+                Constants.courseType = "d";
+                Navigator.pop(context);
+                Navigator.push(context, MaterialPageRoute(builder: (context)=>SemesterList()));
+              }, child: Text("Diploma")),
+              Container(margin: EdgeInsets.only(bottom: 10.0),),
+              ElevatedButton(onPressed: (){
+                Constants.courseType = "b";
+                Navigator.pop(context);
+                Navigator.push(context, MaterialPageRoute(builder: (context)=>SemesterList()));
+              }, child: Text("Degree")),
+            ],
+          ),
+        ),
+      );
+    });
   }
 }

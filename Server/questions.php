@@ -222,8 +222,105 @@ if($_SERVER["REQUEST_METHOD"] == "GET"){
         $sql->bind_param($_GET["t_id"]);
         
     }
-    else{
+    else if(isset($_GET["user"]) && isset($_GET["type"])){
+        $sql = "";
+        if($_GET["type"] == "Unchecked"){
+            $sql = "SELECT * FROM answer_history ah JOIN question_details qd ON qd.id = ah.question_id AND student_id = ".$_GET["user"]." AND faculty_id IS NULL";
+            $res = $conn->query($sql);
 
+            if($res->num_rows == 0){
+                header("Content-Type:application/json");
+                http_response_code(400);
+                echo json_encode(array("message"=>"No Questions found","total"=>0));
+            }
+            else{
+                $response = array();
+
+                while($row = $res->fetch_assoc()){
+                    array_push($response,array("id"=>$row["id"],"question"=>$row["question"],"answer"=>$row["answer"],
+                    "feedback"=>$row["feedback"],"facultyName"=>$row["faculty_id"],"userRating"=>$row["user_rating"],
+                    "facultyReview"=>$row["faculty_review"]));
+                }
+                header("Content-Type:application/json");
+                http_response_code(200);
+                echo json_encode(array("message"=>"Questions found","total"=>$res->num_rows,"body"=>$response));
+            }
+        }
+        else{
+            $sql = "SELECT * FROM (SELECT ah.id,qd.question,ah.answer,ah.feedback,ah.faculty_id fid,ah.user_rating,ah.student_id,
+            ah.faculty_review FROM answer_history ah JOIN question_details qd ON qd.id = ah.question_id AND ah.student_id = ".$_GET["user"].") a 
+            JOIN (SELECT fid,fn,ln FROM faculty) b ON a.fid = b.fid;";
+
+            if($res->num_rows == 0){
+                header("Content-Type:application/json");
+                http_response_code(400);
+                echo json_encode(array("message"=>"No Questions found","total"=>0));
+            }
+            else{
+                $response = array();
+
+                while($row = $res->fetch_assoc()){
+                    array_push($response,array("id"=>$row["id"],"question"=>$row["question"],"answer"=>$row["answer"],
+                    "feedback"=>$row["feedback"],"facultyName"=>$row["faculty_id"],"userRating"=>$row["user_rating"],
+                    "facultyReview"=>$row["faculty_review"]));
+                }
+                header("Content-Type:application/json");
+                http_response_code(200);
+                echo json_encode(array("message"=>"Questions found","total"=>$res->num_rows,"body"=>$response));
+            }
+        }
+        
+        
+    }
+
+    else if(isset($_GET["course"]) && isset($_GET["sem"])){
+        echo "Hello";
+        $sql = "SELECT fn,ln,enroll FROM `student` WHERE sem = ".$_GET["sem"]." AND course = '".($_GET["course"] == "Diploma")?'d':'b'."' AND enroll IN (SELECT student_id FROM `answer_history` WHERE feedback IS NULL);";
+        echo $sql;
+        $res = $conn->query($sql);
+
+        if($res->num_rows == 0){
+            header("Content-Type:application/json");
+            http_response_code(400);
+            echo json_encode(array("message"=>"No Data found","total"=>0));
+        }
+        else{
+            $response = array();
+
+                while($row = $res->fetch_assoc()){
+                    $name = ucfirst($row["fn"])." ".ucfirst($row["ln"]);
+                    $enroll = $row["enroll"];
+                    array_push($response,array("id"=>$enroll,"name"=>$name));
+                }
+                header("Content-Type:application/json");
+                http_response_code(200);
+                echo json_encode(array("message"=>"Users found","total"=>$res->num_rows,"body"=>$response));
+        }
+    }
+
+    else if(isset($_GET["student"]) && isset($_GET["type"]) && isset($_GET["userType"])){
+        $sql = "SELECT * FROM (SELECT ah.id id,ah.question_id as qid,ah.answer answer,ah.user_rating user_rating,s.fn fn,s.ln,ah.student_id FROM 
+        `answer_history` ah JOIN `student` s ON student_id = s.enroll AND ah.feedback IS NULL AND ah.student_id = '".$_GET["student"]."') a JOIN 
+        (SELECT qd.question,qd.id FROM `question_details` qd) b ON a.qid = b.id;";
+
+        $res = $conn->query($sql);
+
+        if($res->num_rows == 0){
+            header("Content-Type:application/json");
+            http_response_code(404);
+            echo json_encode(array("message"=>"No Data found","total"=>0));
+        }
+        else{
+                $response = array();
+
+                while($row = $res->fetch_assoc()){
+                    array_push($response,array("id"=>$row["id"],"question"=>$row["question"],"answer"=>$row["answer"],
+                    "userRating"=>$row["user_rating"]));
+                }
+                header("Content-Type:application/json");
+                http_response_code(200);
+                echo json_encode(array("message"=>"Questions found","total"=>$res->num_rows,"body"=>$response));
+        }
     }
 }
 else if($_SERVER["REQUEST_METHOD"] == "POST"){

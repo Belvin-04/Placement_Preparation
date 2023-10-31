@@ -31,12 +31,12 @@ class _LoginState extends State<Login> {
               TextFormField(
                 validator: (val){
                   if(val!.isEmpty){
-                    return "Please Enter Email";
+                    return "Please Enter Enroll No. Or Faculty ID";
                   }
                 },
                 controller: emailController,
                 decoration: InputDecoration(
-                labelText: "Email",
+                labelText: "Enroll | Faculty Id",
                 border: OutlineInputBorder(borderRadius: BorderRadius.circular(10.0))
               ),),
               Container(margin: EdgeInsets.only(bottom: 10.0),),
