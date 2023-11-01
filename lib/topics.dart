@@ -79,7 +79,7 @@ class _TopicsState extends State<Topics> {
                                         onPressed: (writtenBtnState)?(){
                                       Constants.quizType = "WRITTEN";
                                       Navigator.push(context, MaterialPageRoute(builder: (context) => Quiz(Topic(snapshot.data![index].getName, snapshot.data![index].getId))));
-                                    }:(){}, child: Text("WRITTEN"))
+                                    }:(){}, child: Text("Descriptive"))
                                   ],
                                 ),
                               ),

@@ -9,6 +9,7 @@ class Constants{
   static String studentPath = "Placement Preparation/Server/student.php";
 
   static int userType = 0;
+
   static String userEmail = "";
   static String userName = "";
 
