@@ -75,13 +75,12 @@ class Question{
     questionMap["type"] = q.type;
     questionMap["topic"] = q.topic?.toMap();
     questionMap["level"] = q.getLevel;
+    questionMap["correctAnswer"] = q.correctAnswer;
     if(q.type == "MCQ"){
       questionMap["options"] = q.options;
-      questionMap["correctAnswer"] = q.correctAnswer;
     }
     else{
       questionMap["options"] = ["NA"];
-      questionMap["correctAnswer"] = "NA";
     }
     return questionMap;
   }

@@ -27,6 +27,8 @@ class _QuestionDetailState extends State<QuestionDetail> {
   TextEditingController questionController = TextEditingController();
   TextEditingController optionController = TextEditingController();
   TextEditingController levelController = TextEditingController();
+  TextEditingController standardAnswerController = TextEditingController();
+
 
   final _formKey = GlobalKey<FormState>();
   final _optionKey = GlobalKey<FormState>();
@@ -38,10 +40,14 @@ class _QuestionDetailState extends State<QuestionDetail> {
     levelController.text = widget.question.getLevel.toString();
      correctOption = widget.question.getCorrectAnswer;
     options = widget.question.getOptions;
+
     if(widget.question.getType == "MCQ"){
       selectedValue = Type.mcq;
       visible = true;
       getOptions(widget.question);
+    }
+    else{
+      getStandardAnswer();
     }
   }
 
@@ -102,6 +108,27 @@ class _QuestionDetailState extends State<QuestionDetail> {
                         labelText: "Level",
                         border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(10.0))),
+                  ),
+                  Container(margin: EdgeInsets.only(bottom: 10.0),),
+                  Visibility(
+                    visible: !visible,
+                    child: TextFormField(
+                      onChanged: (val){
+                          widget.question.correctAnswer = val;
+                          print(widget.question.getCorrectAnswer);
+                      },
+                      validator: (val){
+                        if(val!.isEmpty){
+                          return "Please enter a standard answer";
+                        }
+                        return null;
+                      },
+                      controller: standardAnswerController,
+                      decoration: InputDecoration(
+                          labelText: "Standard Answer",
+                          border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(10.0))),
+                    ),
                   ),
                   Row(
                     mainAxisSize: MainAxisSize.min,
@@ -299,6 +326,7 @@ class _QuestionDetailState extends State<QuestionDetail> {
         visible = false;
         questionController.text = "";
         levelController.text = "0";
+        standardAnswerController.text = "";
         options = [];
         selectedValue = Type.written;
         widget.question.setOptions = options;
@@ -378,8 +406,26 @@ class _QuestionDetailState extends State<QuestionDetail> {
     }
   }
 
+  void getStandardAnswer() async{
+    var url = Uri.http(Constants.baseURL, Constants.questionPath,{"standardAnswer":widget.question.getId.toString()});
+
+    var response = await http.get(url);
+    if(response.statusCode == 200){
+      var data = jsonDecode(response.body);
+      var data1 = data["body"];
+      String correct = data1["correctAnswer"];
+      widget.question.setCorrectAnswer = correct;
+
+      print(widget.question);
+      setState(() {
+        standardAnswerController.text = correct;
+      });
+    }
+  }
+
   void editQuestion(Question question) async {
     var questionMap = Question.toMap(widget.question);
+    print(questionMap);
 
     var op = "";
 

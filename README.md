@@ -16,10 +16,10 @@ Sign In
 Written Quiz  
 Edit Question  
 Separator in options
-Change Written to descriptive  
-## Pending
-Quiz feedback  
+Change Written to descriptive
 There should be a standard descriptive answer  
+## Pending
+Quiz feedback
 Student will type the descriptive answer then after checking he/she should not be able to edit then rate themself    
 Faculty should be able to view the student response in question wise manner and not the student wise manner  
 Keep record of mcq answers as well

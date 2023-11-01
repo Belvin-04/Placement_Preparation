@@ -121,6 +121,25 @@ if($_SERVER["REQUEST_METHOD"] == "GET"){
         }
     }
 
+    else if(isset($_GET["standardAnswer"])){
+        $sql = $conn->prepare("SELECT * FROM `question_details` qd JOIN `descriptive_answer` da ON qd.id = da.q_id WHERE qd.id = ?");
+        $sql->bind_param("i",$_GET["standardAnswer"]);
+
+        $sql->execute();
+        $res = $sql->get_result();
+
+        if($res->num_rows == 0){
+            header("Content-Type:application/json");
+            http_response_code(204);
+        }
+        else{
+            $data = $res->fetch_assoc();
+            header("Content-Type:application/json");
+            http_response_code(200);
+            echo json_encode(array("message"=>"Answer Found","body"=>array("correctAnswer"=>$data["answer"])));
+        }
+    }
+
     else if(isset($_GET["check"]) && isset($_GET["id"])){
         $type = 1;
         $sql = $conn->prepare("SELECT * FROM question_details WHERE topic_id = ? AND type_id = ?");
@@ -372,7 +391,10 @@ else if($_SERVER["REQUEST_METHOD"] == "POST"){
             // $sql->execute();
             $sql = "INSERT INTO question_answer_relation VALUES(".$quesId.",".$correctId.")";
             $conn->query($sql);
-
+        }
+        else{
+            $sql = "INSERT INTO descriptive_answer(q_id,answer) VALUES (".$quesId.",'".$_POST["correctAnswer"]."')";
+            $conn->query($sql);
         }
         
         header("Content-Type:application/json");
@@ -480,6 +502,10 @@ else if($_SERVER["REQUEST_METHOD"] == "PATCH"){
             $sql = "INSERT INTO question_answer_relation VALUES(".$quesId.",".$correctId.")";
             $conn->query($sql);
 
+        }
+        else{
+            $sql = "INSERT INTO descriptive_answer(q_id,answer) VALUES (".$quesId.",'".$_PATCH["correctAnswer"]."')";
+            $conn->query($sql);
         }
         
         header("Content-Type:application/json");
