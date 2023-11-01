@@ -22,8 +22,12 @@ class _QuizState extends State<Quiz>{
   String selectedAnswer = "";
   bool check = false;
 
+  bool stdAns = false;
+  bool editable = true;
+
   TextEditingController answerController = TextEditingController();
   TextEditingController ratingController = TextEditingController();
+  TextEditingController stdAnsController = TextEditingController();
 
   final _formKey = GlobalKey<FormState>();
 
@@ -47,6 +51,8 @@ class _QuizState extends State<Quiz>{
           builder: (context,snapshot){
             if(snapshot.hasData){
               var questionData = snapshot.data;
+              stdAnsController.text = questionData![q].getCorrectAnswer;
+              print(stdAnsController.value.text);
               return Constants.quizType == "MCQ"?Form(
                   child: Column(
                     children: [
@@ -79,11 +85,13 @@ class _QuizState extends State<Quiz>{
                               });
                             }
                           }),
+                      Container(height: 10.0,),
                       ElevatedButton(onPressed: (){
                         setState(() {
                           check = true;
                         });
                       }, child: Text("Check")),
+                      Container(height: 10.0,),
                       ElevatedButton(onPressed: (){
 
                         if(q+2 == questionData?.length){
@@ -111,6 +119,7 @@ class _QuizState extends State<Quiz>{
                     children: [
                       Text("${q+1}.${questionData?[q].question}"),
                       TextFormField(
+                        enabled: editable,
                         controller: answerController,
                         validator: (val){
                           if(val!.isEmpty){
@@ -125,7 +134,9 @@ class _QuizState extends State<Quiz>{
                         ),
 
                       ),
+                      Container(height: 10.0,),
                       TextFormField(
+                        enabled: stdAns,
                         controller: ratingController,
                         validator: (val){
                           if(val!.isEmpty){
@@ -139,25 +150,58 @@ class _QuizState extends State<Quiz>{
                           )
                         ),
                       ),
+                      Container(height: 10.0,),
+                      Visibility(
+                        visible: stdAns,
+                        child: TextFormField(
+                          enabled: false,
+                          controller: stdAnsController,
+                          decoration: InputDecoration(
+                              labelText: "Standard Answer",
+                              border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(10.0)
+                              )
+                          ),
+                        ),
+                      ),
+                      Container(height: 10.0,),
                       ElevatedButton(onPressed: (){
-
-                        submitAnswer(questionData![q].getId);
-                        answerController.text = "";
-                        ratingController.text = "";
-                        if(q+2 == questionData?.length){
+                        editable = false;
+                        stdAns = true;
+                        if(answerController.value.text.isEmpty){
+                          Constants.showSnackBar("Please Type answer to verify", context);
+                        }
+                        else{
                           setState(() {
-                            q = q+1;
-                            btnText = "Submit";
+
                           });
                         }
-                        else if(q+1 < questionData!.length){
-                          setState(() {
-                            q = q+1;
-                          });
-                        }
-                        else if(q+1 == questionData!.length){
 
-                          Navigator.pop(context);
+                      }, child: Text("Verify")),
+                      Container(height: 10.0,),
+                      ElevatedButton(onPressed: (){
+                        editable = true;
+                        stdAns = false;
+
+                        if(_formKey.currentState!.validate()){
+                          submitAnswer(questionData![q].getId);
+                          answerController.text = "";
+                          ratingController.text = "";
+                          if(q+2 == questionData?.length){
+                            setState(() {
+                              q = q+1;
+                              btnText = "Submit";
+                            });
+                          }
+                          else if(q+1 < questionData!.length){
+                            setState(() {
+                              q = q+1;
+                            });
+                          }
+                          else if(q+1 == questionData!.length){
+
+                            Navigator.pop(context);
+                          }
                         }
                       }, child: Text(btnText))
                     ],

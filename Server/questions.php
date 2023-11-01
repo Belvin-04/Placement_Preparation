@@ -163,7 +163,7 @@ if($_SERVER["REQUEST_METHOD"] == "GET"){
     }
     
     else if(isset($_GET["t_id"]) && isset($_GET["type"]) && $_GET["type"] == "WRITTEN"){
-        $sql = $conn->prepare("SELECT * FROM question_details WHERE topic_id = ? AND type_id = ?");
+        $sql = $conn->prepare("SELECT * FROM `question_details` qd JOIN `descriptive_answer` da ON qd.id = da.q_id AND qd.topic_id = ? AND qd.type_id = ?");
         $type_id = 2;
         $sql->bind_param("ii",$_GET["t_id"],$type_id);
         $sql->execute();
@@ -176,7 +176,7 @@ if($_SERVER["REQUEST_METHOD"] == "GET"){
         else{
             $response = array();
             while($data = $res->fetch_assoc()){
-                array_push($response,array("id"=>$data["id"],"question"=>$data["question"],"type"=>"WRITTEN","level"=>$data["level"]));
+                array_push($response,array("id"=>$data["id"],"question"=>$data["question"],"type"=>"WRITTEN","level"=>$data["level"],"correctAnswer"=>$data["answer"]));
             }
             header("Content-Type:application/json");
             http_response_code(200);
