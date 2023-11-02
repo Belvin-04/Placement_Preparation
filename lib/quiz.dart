@@ -51,8 +51,13 @@ class _QuizState extends State<Quiz>{
           builder: (context,snapshot){
             if(snapshot.hasData){
               var questionData = snapshot.data;
-              stdAnsController.text = questionData![q].getCorrectAnswer;
-              print(stdAnsController.value.text);
+              if(questionData!.length == 1){
+                btnText = "Submit";
+              }
+              if(q<snapshot.data!.length){
+                stdAnsController.text = questionData![q].getCorrectAnswer;
+              }
+
               return Constants.quizType == "MCQ"?Form(
                   child: Column(
                     children: [
@@ -187,19 +192,21 @@ class _QuizState extends State<Quiz>{
                           submitAnswer(questionData![q].getId);
                           answerController.text = "";
                           ratingController.text = "";
-                          if(q+2 == questionData?.length){
+                          if(q+2 == questionData!.length){
+                            print("q+2");
                             setState(() {
                               q = q+1;
                               btnText = "Submit";
                             });
                           }
                           else if(q+1 < questionData!.length){
+                            print("q+1");
                             setState(() {
                               q = q+1;
                             });
                           }
                           else if(q+1 == questionData!.length){
-
+                            print("q+1_1");
                             Navigator.pop(context);
                           }
                         }

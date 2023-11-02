@@ -31,7 +31,7 @@ class _QuizFeedbackListState extends State<QuizFeedbackList> {
       appBar: AppBar(
         title: Text("Quiz Questions"),
       ),
-      body: Column(
+      body: ListView(
         children: [
           Row(
             children: [

@@ -94,7 +94,9 @@ class Question{
 
     Question q = Question(question, type,level,id);
     q.setTopic = t;
-    q.setCorrectAnswer = questionMap["correctAnswer"];
+    if(questionMap.containsKey("correctAnswer")){
+      q.setCorrectAnswer = questionMap["correctAnswer"];
+    }
 
     if(questionMap.length == 6){
       options = (questionMap["options"] as List).map((item) => item as String).toList();
