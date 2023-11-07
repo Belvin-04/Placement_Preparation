@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:file_picker/file_picker.dart';
 import 'package:excel/excel.dart';
 import 'package:flutter/material.dart';
+import 'package:placement_preparation/FacultyReview.dart';
 import 'package:placement_preparation/Models/Question.dart';
 import 'package:http/http.dart' as http;
 import 'package:placement_preparation/QuestionDetail.dart';
@@ -18,6 +19,8 @@ class Questions extends StatefulWidget {
 }
 
 class _QuestionsState extends State<Questions> {
+  List<bool> colors = [];
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -70,6 +73,18 @@ class _QuestionsState extends State<Questions> {
                         trailing: Row(
                           mainAxisSize: MainAxisSize.min,
                           children: [
+                            (snapshot.data![index].getType == "WRITTEN")?
+                            IconButton(
+                                onPressed: (colors[index])?() async{
+                              int c = await Navigator.push(context, MaterialPageRoute(builder: (context)=>FacultyReview(snapshot.data![index])));
+                              if(c == 1){
+                                setState(() {
+
+                                });
+                              }
+                            }:(){}, icon:
+                            Icon(Icons.assessment,color: (colors[index])?Colors.greenAccent:Colors.grey,)):Container(),
+
                             IconButton(icon: Icon(Icons.edit,color: Colors.blue,),onPressed: () async{
                               Constants.questionOperation = true;
                               Question q = snapshot.data![index];
@@ -121,9 +136,15 @@ class _QuestionsState extends State<Questions> {
     if (response.statusCode != 204) {
       List b = jsonDecode(response.body)["body"];
       int total = jsonDecode(response.body)["total"];
+
+      colors.clear();
+
       for (int i = 0; i < total; i++) {
         questions.add(Question.toQuestion(b[i], widget.topic));
+        int color = await checkColor(questions[i].getId);
+        colors.add(color != 0);
       }
+
       return questions;
     } else {
       return [];
@@ -213,6 +234,15 @@ class _QuestionsState extends State<Questions> {
       print(response.body);
       return 0;
     }
+  }
+
+  Future<int> checkColor(int questionId) async{
+    var url = Uri.http(Constants.baseURL,Constants.checkPath,
+        {"checkColor":"1","questionId":questionId.toString(),"faculty_id":Constants.userEmail});
+    var response = await http.get(url);
+    print(url);
+
+    return jsonDecode(response.body)["total"];
   }
 }
 

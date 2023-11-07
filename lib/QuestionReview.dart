@@ -16,7 +16,7 @@ class _QuestionReviewState extends State<QuestionReview> {
       appBar: AppBar(title: Text("Question Review"),),
       body: Column(
         children: [
-          Center(child: Text(widget.ah.question)),
+          //Center(child: Text(widget.ah.question)),
           Text("Your Answer: ${widget.ah.answer}"),
           Text("Your Rating: ${widget.ah.userRating}")
         ],

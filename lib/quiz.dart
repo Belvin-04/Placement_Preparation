@@ -127,7 +127,7 @@ class _QuizState extends State<Quiz>{
                         enabled: editable,
                         controller: answerController,
                         validator: (val){
-                          if(val!.isEmpty){
+                          if(val!.trim().isEmpty){
                             return "Please Enter Answer";
                           }
                         },
@@ -141,11 +141,15 @@ class _QuizState extends State<Quiz>{
                       ),
                       Container(height: 10.0,),
                       TextFormField(
+                        keyboardType: TextInputType.number,
                         enabled: stdAns,
                         controller: ratingController,
                         validator: (val){
-                          if(val!.isEmpty){
+                          if(val!.trim().isEmpty){
                             return "Please Enter Rating";
+                          }
+                          else if(int.parse(val) < 0 || int.parse(val) > 10){
+                            return "Rate between 1-10";
                           }
                         },
                         decoration: InputDecoration(
