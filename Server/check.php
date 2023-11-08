@@ -73,7 +73,7 @@ if($_SERVER["REQUEST_METHOD"] == "GET"){
 
 else if($_SERVER["REQUEST_METHOD"] == "POST"){
     if(isset($_POST["id"]) && isset($_POST["faculty_id"]) && isset($_POST["faculty_rating"]) && isset($_POST["faculty_feedback"])){
-        $sql = "INSERT INTO faculty_feedback (answer_id,faculty_id,rating,review) VALUES (".$_POST["id"].",".$_POST["faculty_id"].",".$_POST["faculty_rating"].",".$_POST["faculty_feedback"].")";
+        $sql = "INSERT INTO faculty_feedback (answer_id,faculty_id,rating,review) VALUES (".$_POST["id"].",".$_POST["faculty_id"].",".$_POST["faculty_rating"].",'".$_POST["faculty_feedback"]."')";
         $conn->query($sql);
     }
     else{
