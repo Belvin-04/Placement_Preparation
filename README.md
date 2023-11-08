@@ -24,6 +24,13 @@ Quiz feedback
 Faculty should be able to view the student response in question wise manner and not the student wise manner  
 ## Pending
 Students should be able to view the Faculty response  
-Keep record of mcq answers as well
+Keep record of mcq answers as well  
+Improve UI  
+
+## Testing Criteria
+Host temporarily  
+3 to 4 subjects 10 question to be entered with correct answer, atleast 20 students need to attempt and 3 faculties should check  
+Keep log  
+
 
 
