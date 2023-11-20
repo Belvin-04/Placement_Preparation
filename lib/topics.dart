@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:placement_preparation/FeedbackStudent.dart';
 import 'package:placement_preparation/questions.dart';
 import 'package:placement_preparation/quiz.dart';
 import 'Models/Topic.dart';
@@ -18,6 +19,9 @@ class _TopicsState extends State<Topics> {
   final _formKey = GlobalKey<FormState>();
   bool mcqBtnState = true;
   bool writtenBtnState = true;
+  bool feedbackBtnState = true;
+
+  var quizFeedback = [];
 
   @override
   Widget build(BuildContext context) {
@@ -47,27 +51,46 @@ class _TopicsState extends State<Topics> {
                         }
                         else{
                           await checkQuiz(snapshot.data![index]);
+                          await checkFeedback(snapshot.data![index]);
+                          if(!context.mounted) return;
                           showDialog(context: context, builder: (context){
                             return AlertDialog(
                               content: Container(
-                                height: 80,
                                 child: Column(
+                                  mainAxisSize: MainAxisSize.min,
                                   children: [
                                     ElevatedButton(
                                       style: ElevatedButton.styleFrom(backgroundColor: (mcqBtnState)?Colors.blue:Colors.grey),
-                                        onPressed: (mcqBtnState)?(){
+                                        onPressed: (mcqBtnState)?() async{
                                       Constants.quizType = "MCQ";
-                                      Navigator.push(context, MaterialPageRoute(builder: (context) => Quiz(Topic(snapshot.data![index].getName, snapshot.data![index].getId))));
+                                      var c = await Navigator.push(context, MaterialPageRoute(builder: (context) => Quiz(Topic(snapshot.data![index].getName, snapshot.data![index].getId))));
+                                      if(c == 1){
+                                        Navigator.pop(context);
+                                      }
                                     }:(){}, child: Text("MCQ")),
                                     Container(
                                       margin: EdgeInsets.only(bottom: 20.0),
                                     ),
                                     ElevatedButton(
                                         style: ElevatedButton.styleFrom(backgroundColor: (writtenBtnState)?Colors.blue:Colors.grey),
-                                        onPressed: (writtenBtnState)?(){
+                                        onPressed: (writtenBtnState)?() async{
                                       Constants.quizType = "WRITTEN";
-                                      Navigator.push(context, MaterialPageRoute(builder: (context) => Quiz(Topic(snapshot.data![index].getName, snapshot.data![index].getId))));
-                                    }:(){}, child: Text("Descriptive"))
+                                      var c = await Navigator.push(context, MaterialPageRoute(builder: (context) => Quiz(Topic(snapshot.data![index].getName, snapshot.data![index].getId))));
+                                      if(c == 1){
+                                        Navigator.pop(context);
+                                      }
+                                    }:(){}, child: Text("Descriptive")),
+                                    Container(
+                                      margin: EdgeInsets.only(bottom: 20.0),
+                                    ),
+                                    ElevatedButton(
+                                        style: ElevatedButton.styleFrom(backgroundColor: (feedbackBtnState)?Colors.blue:Colors.grey),
+                                        onPressed: (feedbackBtnState)?() async{
+                                          var c = await Navigator.push(context, MaterialPageRoute(builder: (context) => FeedbackStudent(quizFeedback)));
+                                          if(c == 1){
+                                            Navigator.pop(context);
+                                          }
+                                    }:(){}, child: Text("Feedback"))
                                   ],
                                 ),
                               ),
@@ -309,6 +332,25 @@ class _TopicsState extends State<Topics> {
     }
     else{
       print(response.body);
+    }
+  }
+
+  checkFeedback(Topic topic) async {
+    var url = Uri.http(Constants.baseURL,Constants.checkPath);
+    var response = await http.post(url,body: {"tid":topic.getId.toString(),"sid":Constants.userEmail});
+
+    if(response.statusCode == 200){
+      quizFeedback.clear();
+      feedbackBtnState = true;
+      var data = jsonDecode(response.body);
+      var total = data["total"];
+      var body = data["body"];
+      for(int i=0; i<total; i++){
+        quizFeedback.add(body[i]);
+      }
+    }
+    else{
+      feedbackBtnState = false;
     }
   }
 

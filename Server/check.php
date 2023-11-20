@@ -76,6 +76,36 @@ else if($_SERVER["REQUEST_METHOD"] == "POST"){
         $sql = "INSERT INTO faculty_feedback (answer_id,faculty_id,rating,review) VALUES (".$_POST["id"].",".$_POST["faculty_id"].",".$_POST["faculty_rating"].",'".$_POST["faculty_feedback"]."')";
         $conn->query($sql);
     }
+
+    else if(isset($_POST["tid"]) && isset($_POST["sid"])){
+        $sql = $conn->prepare("SELECT qd.question,da.answer as stdAns,ah.answer,ah.user_rating,ff.rating,ff.review,CONCAT('Prof. ',UCASE(LEFT(s.fn, 1)), LCASE(SUBSTRING(s.fn, 2)),' ',UCASE(LEFT(s.ln, 1)), LCASE(SUBSTRING(s.ln, 2))) as name FROM `faculty_feedback` ff 
+                        JOIN `answer_history` ah 
+                        ON ff.answer_id = ah.id
+                        JOIN `faculty` s ON ff.faculty_id = s.fid
+                        JOIN `question_details` qd ON ah.question_id = qd.id
+                        JOIN `descriptive_answer` da ON da.q_id = qd.id
+                        WHERE qd.topic_id = ? AND ah.student_id = ?;");
+
+        $sql->bind_param("is",$_POST["tid"],$_POST["sid"]);
+        $sql->execute();
+        $res = $sql->get_result();
+        $response = array();
+        if($res->num_rows == 0){
+            header("Content-Type:application/json");
+            http_response_code(204);
+        }
+        else{
+            $response = array();
+            while($row = $res->fetch_assoc()){
+                array_push($response,array("question"=>$row["question"],"stdAnswer"=>$row["stdAns"],"answer"=>$row["answer"],"userRating"=>$row["user_rating"],"rating"=>$row["rating"],"review"=>$row["review"],"name"=>$row["name"]));
+            }
+            header("Content-Type:application/json");
+            http_response_code(200);
+            echo json_encode(array("message"=>"Responses found","total"=>$res->num_rows,"body"=>$response));
+        }
+
+    }
+
     else{
         header("Content-Type:application/json");
         http_response_code(400);

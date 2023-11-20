@@ -113,7 +113,7 @@ class _QuizState extends State<Quiz>{
                           });
                         }
                         else if(q+1 == questionData!.length){
-                          Navigator.pop(context);
+                          Navigator.pop(context,1);
                         }
                       }, child: Text(btnText))
                     ],
@@ -211,7 +211,7 @@ class _QuizState extends State<Quiz>{
                           }
                           else if(q+1 == questionData!.length){
                             print("q+1_1");
-                            Navigator.pop(context);
+                            Navigator.pop(context,1);
                           }
                         }
                       }, child: Text(btnText))
