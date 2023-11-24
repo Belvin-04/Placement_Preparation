@@ -125,16 +125,13 @@ class _FeedbackStudentState extends State<FeedbackStudent> {
 
                     ElevatedButton(onPressed: () {
                       if (q + 2 == widget.quizFeedback!.length) {
-                        print("q+2");
                         q = q + 1;
                         btnText = "Submit";
                       }
                       else if (q + 1 < widget.quizFeedback!.length) {
-                        print("q+1");
                         q = q + 1;
                       }
                       else if (q + 1 == widget.quizFeedback!.length) {
-                        print("q+1_1");
                         Navigator.pop(context, 1);
                       }
                       setState(() {

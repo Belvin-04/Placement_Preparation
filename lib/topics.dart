@@ -295,13 +295,13 @@ class _TopicsState extends State<Topics> {
 
   Future<int> deleteTopic(int id) async {
     var url = Uri.http(Constants.baseURL, Constants.topicPath, {"t_id": "$id"});
-    print(url);
+
     // Await the http get response, then decode the json-formatted response.
     var response = await http.delete(url);
     if (response.statusCode == 200) {
       return 1;
     } else {
-      print(response.body);
+
       return 0;
     }
   }
@@ -311,7 +311,7 @@ class _TopicsState extends State<Topics> {
 
     // Await the http get response, then decode the json-formatted response.
     var response = await http.patch(url, body: {"name": topic.getName,"id":"${topic.getId}"});
-    print(response.statusCode);
+
     if (response.statusCode == 201) {
       return topic;
     } else if (response.statusCode == 409) {
@@ -331,7 +331,7 @@ class _TopicsState extends State<Topics> {
       writtenBtnState = data["written"] != 0;
     }
     else{
-      print(response.body);
+
     }
   }
 

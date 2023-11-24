@@ -158,7 +158,7 @@ class _QuestionsState extends State<Questions> {
       allowMultiple: false,
     );
     List<Question> questions = [];
-    // print(pickedFile);
+
     /// file might be picked
     if (pickedFile != null) {
       var bytes = pickedFile.files.single.bytes;
@@ -205,7 +205,6 @@ class _QuestionsState extends State<Questions> {
       var url = Uri.http(Constants.baseURL, Constants.questionPath);
       var response = await http.post(url,body: {"data":jsonEncode(questionRequestMap)});
 
-      print(response.body);
       if (response.statusCode != 204) {
         // List b = jsonDecode(response.body)["body"];
         // int total = jsonDecode(response.body)["total"];
@@ -225,13 +224,13 @@ class _QuestionsState extends State<Questions> {
 
   Future<int> deleteQuestion(int id) async{
     var url = Uri.http(Constants.baseURL, Constants.questionPath, {"q_id": "$id"});
-    print(url);
+
     // Await the http get response, then decode the json-formatted response.
     var response = await http.delete(url);
     if (response.statusCode == 200) {
       return 1;
     } else {
-      print(response.body);
+
       return 0;
     }
   }
@@ -240,7 +239,7 @@ class _QuestionsState extends State<Questions> {
     var url = Uri.http(Constants.baseURL,Constants.checkPath,
         {"checkColor":"1","questionId":questionId.toString(),"faculty_id":Constants.userEmail});
     var response = await http.get(url);
-    print(url);
+
 
     return jsonDecode(response.body)["total"];
   }

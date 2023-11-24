@@ -154,18 +154,15 @@ class _FacultyReviewState extends State<FacultyReview>{
                           if(_formKey.currentState!.validate()){
                             submitFeedback(snapshot.data![q].id);
                             if(q+2 == questionData!.length){
-                              print("q+2");
                                 q = q+1;
                                 btnText = "Submit";
 
                             }
                             else if(q+1 < questionData!.length){
-                              print("q+1");
                                 q = q+1;
 
                             }
                             else if(q+1 == questionData!.length){
-                              print("q+1_1");
                               Navigator.pop(context,1);
                             }
                             setState(() {
@@ -202,7 +199,6 @@ class _FacultyReviewState extends State<FacultyReview>{
       List b = jsonDecode(response.body)["body"];
       int total = jsonDecode(response.body)["total"];
       for (int i = 0; i < total; i++) {
-        print(b[i]);
         answers.add(AnswerHistory.toAnswerHistory(b[i]));
       }
       return answers;

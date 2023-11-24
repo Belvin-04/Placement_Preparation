@@ -197,20 +197,20 @@ class _QuizState extends State<Quiz>{
                           answerController.text = "";
                           ratingController.text = "";
                           if(q+2 == questionData!.length){
-                            print("q+2");
+
                             setState(() {
                               q = q+1;
                               btnText = "Submit";
                             });
                           }
                           else if(q+1 < questionData!.length){
-                            print("q+1");
+
                             setState(() {
                               q = q+1;
                             });
                           }
                           else if(q+1 == questionData!.length){
-                            print("q+1_1");
+
                             Navigator.pop(context,1);
                           }
                         }
@@ -233,7 +233,7 @@ class _QuizState extends State<Quiz>{
     var url = Uri.http(Constants.baseURL, Constants.questionPath,
         {"t_id": "$topicId","type":Constants.quizType});
 
-    print(url);
+
     var response = await http.get(url);
 
     if (response.statusCode != 204) {
@@ -252,7 +252,7 @@ class _QuizState extends State<Quiz>{
 
     // Await the http get response, then decode the json-formatted response.
     var response = await http.post(url, body: {"question_id": id.toString(),"answer":answerController.value.text,"rating":ratingController.value.text,"id":Constants.userEmail});
-    print(response.body);
+
   }
 }
 

@@ -115,7 +115,6 @@ class _QuestionDetailState extends State<QuestionDetail> {
                     child: TextFormField(
                       onChanged: (val){
                           widget.question.correctAnswer = val;
-                          print(widget.question.getCorrectAnswer);
                       },
                       validator: (val){
                         if(val!.isEmpty){
@@ -310,8 +309,6 @@ class _QuestionDetailState extends State<QuestionDetail> {
     questionMap["level"] = questionMap["level"].toString();
     questionMap["options"] = op;
 
-
-    print(questionMap);
     // Await the http get response, then decode the json-formatted response.
     var jsonQuestionMap = jsonEncode(questionMap);
 
@@ -337,8 +334,7 @@ class _QuestionDetailState extends State<QuestionDetail> {
     }
     else{
       //return topic;
-      print(response.statusCode);
-      print(response.body);
+
     }
   }
   void showSnackBar(String message) {
@@ -416,7 +412,6 @@ class _QuestionDetailState extends State<QuestionDetail> {
       String correct = data1["correctAnswer"];
       widget.question.setCorrectAnswer = correct;
 
-      print(widget.question);
       setState(() {
         standardAnswerController.text = correct;
       });
@@ -425,7 +420,6 @@ class _QuestionDetailState extends State<QuestionDetail> {
 
   void editQuestion(Question question) async {
     var questionMap = Question.toMap(widget.question);
-    print(questionMap);
 
     var op = "";
 
@@ -452,7 +446,6 @@ class _QuestionDetailState extends State<QuestionDetail> {
       Navigator.pop(context,1);
     }
     else{
-      print(response.body);
     }
   }
 }

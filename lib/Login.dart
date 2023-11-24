@@ -23,7 +23,7 @@ class _LoginState extends State<Login> {
     return Scaffold(
       appBar: AppBar(title: Text("Login"),),
       body: Padding(
-        padding: const EdgeInsets.all(8.0),
+        padding: const EdgeInsets.all(16.0),
         child: Form(
           key: _formKey,
           child: Column(
@@ -66,7 +66,8 @@ class _LoginState extends State<Login> {
                      Navigator.push(context, MaterialPageRoute(builder: (context)=>Topics()));
                    }
                 }
-              }, child: Text("Login"))
+              }, child: Text("Login"),
+              )
             ],
           ),
         ),
@@ -79,11 +80,9 @@ class _LoginState extends State<Login> {
 
     // Await the http get response, then decode the json-formatted response.
     var response = await http.post(url, body: {"email": email,"pswd":"${md5.convert(utf8.encode(password))}"});
-    print(response.statusCode);
 
     if (response.statusCode == 200) {
       var data = jsonDecode(response.body);
-      print(data);
       Constants.userEmail = data["body"]["id"];
 
       if(data["body"]["user"] == "Faculty"){
