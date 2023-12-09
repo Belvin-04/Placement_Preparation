@@ -41,18 +41,20 @@ class _FeedbackStudentState extends State<FeedbackStudent> {
     }
 
     return Scaffold(
+        backgroundColor: Colors.deepPurple.shade50,
         appBar: AppBar(
           title: Text("Review"),
 
         ),
         body: Center(
             child: Form(
-                child: Column(
+                child: ListView(
                   children: [
                     Text(widget.quizFeedback[q]["question"],
                       style: TextStyle(fontSize: 20.0),),
                     Container(height: 10.0,),
                     TextFormField(
+                      style: TextStyle(color: Colors.black),
                       enabled: false,
                       controller: facultyNameController,
                       decoration: InputDecoration(
@@ -65,6 +67,8 @@ class _FeedbackStudentState extends State<FeedbackStudent> {
                     ),
                     Container(height: 10.0,),
                     TextFormField(
+                      style: TextStyle(color: Colors.black),
+                      maxLines: 6,
                       enabled: false,
                       controller: stdAnsController,
                       decoration: InputDecoration(
@@ -76,6 +80,8 @@ class _FeedbackStudentState extends State<FeedbackStudent> {
                     ),
                     Container(height: 10.0,),
                     TextFormField(
+                      style: TextStyle(color: Colors.black),
+                      maxLines: 6,
                       enabled: false,
                       controller: answerController,
                       decoration: InputDecoration(
@@ -88,6 +94,7 @@ class _FeedbackStudentState extends State<FeedbackStudent> {
                     ),
                     Container(height: 10.0,),
                     TextFormField(
+                      style: TextStyle(color: Colors.black),
                       enabled: false,
                       controller: ratingController,
                       decoration: InputDecoration(
@@ -100,6 +107,7 @@ class _FeedbackStudentState extends State<FeedbackStudent> {
                     Container(height: 10.0,),
 
                     TextFormField(
+                      style: TextStyle(color: Colors.black),
                       enabled: false,
                       controller: facultyRatingController,
                       decoration: InputDecoration(
@@ -111,6 +119,7 @@ class _FeedbackStudentState extends State<FeedbackStudent> {
                     ),
                     Container(height: 10.0,),
                     TextFormField(
+                      style: TextStyle(color: Colors.black),
                       enabled: false,
                       controller: facultyFeedbackController,
                       decoration: InputDecoration(

@@ -26,6 +26,7 @@ class _TopicsState extends State<Topics> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.deepPurple.shade50,
       floatingActionButton: Visibility(
         visible: Constants.userType == 1,
         child: FloatingActionButton(
@@ -67,7 +68,7 @@ class _TopicsState extends State<Topics> {
                                       if(c == 1){
                                         Navigator.pop(context);
                                       }
-                                    }:(){}, child: Text("MCQ")),
+                                    }:(){}, child: Text("MCQ",style: TextStyle(color: Colors.white))),
                                     Container(
                                       margin: EdgeInsets.only(bottom: 20.0),
                                     ),
@@ -79,7 +80,7 @@ class _TopicsState extends State<Topics> {
                                       if(c == 1){
                                         Navigator.pop(context);
                                       }
-                                    }:(){}, child: Text("Descriptive")),
+                                    }:(){}, child: Text("Descriptive",style: TextStyle(color: Colors.white),)),
                                     Container(
                                       margin: EdgeInsets.only(bottom: 20.0),
                                     ),
@@ -90,7 +91,7 @@ class _TopicsState extends State<Topics> {
                                           if(c == 1){
                                             Navigator.pop(context);
                                           }
-                                    }:(){}, child: Text("Feedback"))
+                                    }:(){}, child: Text("Feedback",style: TextStyle(color: Colors.white)))
                                   ],
                                 ),
                               ),

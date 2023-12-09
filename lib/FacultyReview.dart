@@ -41,6 +41,7 @@ class _FacultyReviewState extends State<FacultyReview>{
   @override
   Widget build(BuildContext context){
     return Scaffold(
+      backgroundColor: Colors.deepPurple.shade50,
       appBar: AppBar(
         title: Text("Review"),
 
@@ -63,11 +64,12 @@ class _FacultyReviewState extends State<FacultyReview>{
 
                 return Form(
                     key: _formKey,
-                    child: Column(
+                    child: ListView(
                       children: [
                         Text(widget.q.getQuestion,style: TextStyle(fontSize: 20.0),),
                         Container(height: 10.0,),
                         TextFormField(
+                          style: TextStyle(color: Colors.black),
                           enabled: false,
                           controller: studentNameController,
                           decoration: InputDecoration(
@@ -80,7 +82,9 @@ class _FacultyReviewState extends State<FacultyReview>{
                         ),
                         Container(height: 10.0,),
                         TextFormField(
+                          style: TextStyle(color: Colors.black),
                           enabled: false,
+                          maxLines: 6,
                           controller: stdAnsController,
                           decoration: InputDecoration(
                               labelText: "Standard Answer",
@@ -91,7 +95,9 @@ class _FacultyReviewState extends State<FacultyReview>{
                         ),
                         Container(height: 10.0,),
                         TextFormField(
+                          style: TextStyle(color: Colors.black),
                           enabled: false,
+                          maxLines: 6,
                           controller: answerController,
                           decoration: InputDecoration(
                               labelText: "Answer",
@@ -103,6 +109,7 @@ class _FacultyReviewState extends State<FacultyReview>{
                         ),
                         Container(height: 10.0,),
                         TextFormField(
+                          style: TextStyle(color: Colors.black),
                           enabled: false,
                           controller: ratingController,
                           decoration: InputDecoration(
@@ -115,6 +122,7 @@ class _FacultyReviewState extends State<FacultyReview>{
                         Container(height: 10.0,),
 
                         TextFormField(
+                          style: TextStyle(color: Colors.black),
                           keyboardType: TextInputType.number,
                           controller: facultyRatingController,
                           validator: (val){
@@ -134,6 +142,7 @@ class _FacultyReviewState extends State<FacultyReview>{
                         ),
                         Container(height: 10.0,),
                         TextFormField(
+                          style: TextStyle(color: Colors.black),
                           controller: facultyFeedbackController,
                           validator: (val){
                             if(val!.trim().isEmpty){

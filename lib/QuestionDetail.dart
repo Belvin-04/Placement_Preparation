@@ -60,6 +60,7 @@ class _QuestionDetailState extends State<QuestionDetail> {
         return false;
       },
       child: Scaffold(
+        backgroundColor: Colors.deepPurple.shade50,
         appBar: AppBar(
           title: Text("Question Detail"),
         ),
@@ -67,10 +68,12 @@ class _QuestionDetailState extends State<QuestionDetail> {
           padding: const EdgeInsets.all(8.0),
           child: Form(
               key: _formKey,
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
+              child: ListView(
+                shrinkWrap: true,
                 children: [
                   TextFormField(
+                    maxLines: null,
+                    keyboardType: TextInputType.multiline,
                     onChanged: (val){
                       widget.question.setQuestion = val;
                     },

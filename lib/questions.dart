@@ -24,6 +24,7 @@ class _QuestionsState extends State<Questions> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.deepPurple.shade50,
       floatingActionButton: FloatingActionButton(
         onPressed: () async {
           showDialog(context: context, builder: (context){
